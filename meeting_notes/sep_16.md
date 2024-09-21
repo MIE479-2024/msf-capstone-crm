@@ -22,5 +22,8 @@ Benchmarking forecast approaches for mortgage credit risk for forward periods [h
 Evaluating the Impact of Borrower Characteristics, Loan Specific Parameters, and Property Conditions on Mortgage Default Risk
 https://journals.aserspublishing.eu/tpref/article/view/8480
 
+Deep Learning for Mortgage Risk
+https://academic.oup.com/jfec/article/19/2/313/6329869?login=false
+
 
 
