@@ -9,3 +9,11 @@
     - [Federal reserve source](https://fred.stlouisfed.org/categories/97)
 - Read over relevant paper on GitHub prior to meeting
     - After meeting identify next steps
+
+
+# Sep. 21th Literature Review
+
+Predicting Mortgage Loan Defaults Using Machine Learning Techniques
+https://www.journals.vu.lt/ekonomika/article/view/34809/34140
+
+
