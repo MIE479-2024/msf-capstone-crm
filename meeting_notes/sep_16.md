@@ -42,6 +42,7 @@ https://doi.org/10.1111/jmcb.13041
 
 
 ** Paper from the persepective of Microfinance institutions 
+
 An Empirical Analysis of the Loan Default Rate of Microfinance Institutions
 Website: https://core.ac.uk/download/pdf/234625689.pdf
 
