@@ -63,4 +63,6 @@ https://dx.doi.org/10.2139/ssrn.3435104
 A novel profit-driven framework for model evaluation in credit scoring
 https://doi-org.myaccess.library.utoronto.ca/10.1016/j.engappai.2024.109137
 
+A focal-aware cost-sensitive boosted tree for imbalanced credit scoring
+https://doi-org.myaccess.library.utoronto.ca/10.1016/j.eswa.2022.118158
 
