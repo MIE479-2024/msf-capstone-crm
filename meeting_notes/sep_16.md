@@ -1,3 +1,4 @@
+# Sep. 16
 # Questions to ask at next check-in 
 - Are we allowed to include other datasets as well, e.g. median sales price, to account for more long term patterns?
 - 
@@ -11,8 +12,8 @@
     - After meeting identify next steps
 
 
-# Sep. 21th Literature Review
-
+# Sep. 21 
+# Literature Review
 Predicting Mortgage Loan Defaults Using Machine Learning Techniques
 https://www.journals.vu.lt/ekonomika/article/view/34809/34140
 
