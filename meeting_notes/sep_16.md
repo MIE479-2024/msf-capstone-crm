@@ -71,3 +71,6 @@ https://doi.org/10.1155/2022/6584352
 
 The Advantage of Case-Tailored Information Metrics for the Development of Predictive Models, Calculated Profit in Credit Scoring
 https://doi.org/10.3390/e24091218
+
+Attention-based Dynamic Multilayer Graph Neural Networks for Loan Default Prediction
+https://doi.org/10.48550/arXiv.2402.00299
