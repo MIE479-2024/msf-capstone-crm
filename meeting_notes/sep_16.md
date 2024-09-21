@@ -26,4 +26,25 @@ Deep Learning for Mortgage Risk
 https://academic.oup.com/jfec/article/19/2/313/6329869?login=false
 
 
+An Empirical Study on Loan Default Prediction Models 
+doi:10.1166/jctn.2019.8312
+Website: https://www.researchgate.net/publication/335966806_An_Empirical_Study_on_Loan_Default_Prediction_Models
+
+A model of mortgage default (A comprehensive review)
+https://scholar.harvard.edu/files/campbell/files/mortdefault13022014.pdf
+
+The Rise in Mortgage Defaults
+https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.23.1.27
+
+BEYOND THE LTV RATIO: NEW MACROPRUDENTIAL LESSONS FROM SPAIN
+https://repositorio.bde.es/bitstream/123456789/9810/1/dt1931e.pdf
+https://doi.org/10.1111/jmcb.13041
+
+
+** Paper from the persepective of Microfinance institutions 
+An Empirical Analysis of the Loan Default Rate of Microfinance Institutions
+Website: https://core.ac.uk/download/pdf/234625689.pdf
+
+
+
 
