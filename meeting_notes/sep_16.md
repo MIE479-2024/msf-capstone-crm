@@ -54,5 +54,13 @@ The Double Trigger for Mortgage Default: Evidence from the Fracking Boom
 https://www.atlantafed.org/blogs/take-on-payments/-/media/documents/research/publications/wp/2017/04a-fracking-and-mortgage-default-2017-03-29.pdf
 
 
+What should lenders be more concerned about? Developing a profit-driven loan default prediction model
+https://doi-org.myaccess.library.utoronto.ca/10.1016/j.eswa.2022.118938
+
+Machine Learning Explainability in Finance: An Application to Default Risk Analysis
+https://dx.doi.org/10.2139/ssrn.3435104
+
+A novel profit-driven framework for model evaluation in credit scoring
+https://doi-org.myaccess.library.utoronto.ca/10.1016/j.engappai.2024.109137
 
 
