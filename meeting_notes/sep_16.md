@@ -66,3 +66,8 @@ https://doi-org.myaccess.library.utoronto.ca/10.1016/j.engappai.2024.109137
 A focal-aware cost-sensitive boosted tree for imbalanced credit scoring
 https://doi-org.myaccess.library.utoronto.ca/10.1016/j.eswa.2022.118158
 
+Empirical Analysis of Ensemble Learning for Imbalanced CreditScoring Datasets: A Systematic Review
+https://doi.org/10.1155/2022/6584352
+
+The Advantage of Case-Tailored Information Metrics for the Development of Predictive Models, Calculated Profit in Credit Scoring
+https://doi.org/10.3390/e24091218
