@@ -17,4 +17,10 @@
 Predicting Mortgage Loan Defaults Using Machine Learning Techniques
 https://www.journals.vu.lt/ekonomika/article/view/34809/34140
 
+Benchmarking forecast approaches for mortgage credit risk for forward periods [https://www.sciencedirect.com/science/article/pii/S0377221721008018#bib0050](https://doi.org/10.1016/j.ejor.2021.09.026)
+
+Evaluating the Impact of Borrower Characteristics, Loan Specific Parameters, and Property Conditions on Mortgage Default Risk
+https://journals.aserspublishing.eu/tpref/article/view/8480
+
+
 
