@@ -43,20 +43,11 @@ https://www.atlantafed.org/blogs/take-on-payments/-/media/documents/research/pub
 What should lenders be more concerned about? Developing a profit-driven loan default prediction model
 https://doi.org/10.1016/j.eswa.2022.118938
 
-Machine Learning Explainability in Finance: An Application to Default Risk Analysis
-https://dx.doi.org/10.2139/ssrn.3435104
-
-A novel profit-driven framework for model evaluation in credit scoring
-https://doi.org/10.1016/j.engappai.2024.109137
-
-A focal-aware cost-sensitive boosted tree for imbalanced credit scoring
-https://doi.org/10.1016/j.eswa.2022.118158
-
 Empirical Analysis of Ensemble Learning for Imbalanced CreditScoring Datasets: A Systematic Review
 https://doi.org/10.1155/2022/6584352
 
 The Advantage of Case-Tailored Information Metrics for the Development of Predictive Models, Calculated Profit in Credit Scoring
 https://doi.org/10.3390/e24091218
 
-Attention-based Dynamic Multilayer Graph Neural Networks for Loan Default Prediction
-https://doi.org/10.48550/arXiv.2402.00299
+Large-Scale Loan Portfolio Selection
+https://ssrn.com/abstract=2641301
