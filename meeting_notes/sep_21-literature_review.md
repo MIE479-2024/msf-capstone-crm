@@ -12,31 +12,31 @@ Deep Learning for Mortgage Risk
 https://academic.oup.com/jfec/article/19/2/313/6329869?login=false
 
 
-An Empirical Study on Loan Default Prediction Models 
+An Empirical Study on Loan Default Prediction Models*
 doi:10.1166/jctn.2019.8312
 https://www.researchgate.net/publication/335966806_An_Empirical_Study_on_Loan_Default_Prediction_Models
 
-A model of mortgage default (A comprehensive review)
+A model of mortgage default (A comprehensive review)*
 https://scholar.harvard.edu/files/campbell/files/mortdefault13022014.pdf
 
-The Rise in Mortgage Defaults
+The Rise in Mortgage Defaults*
 https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.23.1.27
 
-BEYOND THE LTV RATIO: NEW MACROPRUDENTIAL LESSONS FROM SPAIN
+BEYOND THE LTV RATIO: NEW MACROPRUDENTIAL LESSONS FROM SPAIN*
 https://repositorio.bde.es/bitstream/123456789/9810/1/dt1931e.pdf
 https://doi.org/10.1111/jmcb.13041
 
-What Triggers Mortgage Default? New Evidence from Linked Administrative and Survey Data
+What Triggers Mortgage Default? New Evidence from Linked Administrative and Survey Data*
 https://direct.mit.edu/rest/article-abstract/doi/10.1162/rest_a_01371/117712/What-Triggers-Mortgage-Default-New-Evidence-from
 
 
 ** Paper from the persepective of Microfinance institutions 
 
-An Empirical Analysis of the Loan Default Rate of Microfinance Institutions
+An Empirical Analysis of the Loan Default Rate of Microfinance Institutions*
 https://core.ac.uk/download/pdf/234625689.pdf
 
 Some other unexpected factors:
-The Double Trigger for Mortgage Default: Evidence from the Fracking Boom
+The Double Trigger for Mortgage Default: Evidence from the Fracking Boom*
 https://www.atlantafed.org/blogs/take-on-payments/-/media/documents/research/publications/wp/2017/04a-fracking-and-mortgage-default-2017-03-29.pdf
 
 
