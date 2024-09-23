@@ -51,3 +51,6 @@ https://doi.org/10.3390/e24091218
 
 Large-Scale Loan Portfolio Selection
 https://ssrn.com/abstract=2641301
+
+Prepayment and Default Risks of Mortgage-Backed Security Collateral Pools 
+https://doi.org/10.21121/eab.1289964
