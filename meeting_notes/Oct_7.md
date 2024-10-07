@@ -7,3 +7,4 @@ Wait for David's reply
 
 #### Questions to Ask David
 1. Optimization models
+2. Instruction on Next Report
