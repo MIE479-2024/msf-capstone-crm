@@ -61,13 +61,15 @@ def get_measures(
     for bin, group in grouped_data:
         bad_distribution = calculate_distribution(orig_data, group, target="bad")
         good_distribution = calculate_distribution(orig_data, group, target="good")
-        # print(bad_distribution, good_distribution)
+        if len(group) < 0.05*len(orig_data):
+            print("WARNING: less than 5% of data in group", bin)
         if bad_distribution > 0 and good_distribution > 0:
             woe_measure = math.log(good_distribution/bad_distribution) * 100
             iv_measure = (
                 (good_distribution - bad_distribution) * math.log(good_distribution/bad_distribution)
             )
         else:
+            print("Bin either does not contain any 'bad' or 'good' observations.")
             woe_measure = np.nan
             iv_measure = np.nan
 
