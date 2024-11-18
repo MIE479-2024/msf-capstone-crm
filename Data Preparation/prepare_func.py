@@ -582,7 +582,7 @@ def preprocess(table, one_hot_encoding=True):
          newTable = table[[
             'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
             'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 
-            'MI_TYPE','AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+            'MI_PCT', 'MI_TYPE','AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
             'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 
             'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
         ]]
