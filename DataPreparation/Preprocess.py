@@ -705,7 +705,7 @@ def preprocess_nl(table):
     table['Non_Performing_NS'] = (table['LAST_STAT'] == 'N').astype(int)
     table['Reperforming_NS'] = (table['LAST_STAT'] == 'L').astype(int)
 
-    table['COMPLETE_FLAG'] = table['COMPLETE_FLAG'].fillna(0)
+    
     
 
     newTable = table[[

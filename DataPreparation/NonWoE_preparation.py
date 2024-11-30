@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import sys
 #sys.path.append('/Users/mengyanzhu/Documents/GitHub/msf-capstone-crm/')
 #from Preprocess import preprocess_data
@@ -56,7 +57,7 @@ def preprocess_NoWoE(file_years, labelled):
 
 def preprocess_data(file_years, labelled):
     year_table = pd.DataFrame()
-    path = "../dataset/"
+    path = "/Users/mengyanzhu/Documents/GitHub/msf-capstone-crm/dataset/"
     for file_year in file_years:
         for i in range (1, 5):
             
@@ -756,8 +757,7 @@ def preprocess_nl(table):
     table['Non_Performing_NS'] = (table['LAST_STAT'] == 'N').astype(int)
     table['Reperforming_NS'] = (table['LAST_STAT'] == 'L').astype(int)
 
-    table['COMPLETE_FLAG'] = table['COMPLETE_FLAG'].fillna(0)
-    
+   
 
     newTable = table[[
         'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
