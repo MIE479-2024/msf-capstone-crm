@@ -639,7 +639,7 @@ def preprocess(table):
     table = table[[
         'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
         'CSCORE_B', 'FTHB_FLG', 'purpose', 'PROP_TYP', 'NUM_UNIT', 'occ_stat',
-        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE',
+        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'ORIG_DTE', 'FRST_DTE',
         'LAST_RT', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 
         'F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE', 
         'ORIG_VAL', 'LAST_STAT', 'COMPLT_FLG', 'NET_LOSS', 'NET_SEV'
@@ -651,7 +651,7 @@ def preprocess(table):
         'COMPLT_FLG': 'COMPLETE_FLAG'
     })
     
-    table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
+    #table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
     table['ORIG_DTE'] = pd.to_datetime(table['ORIG_DTE'])
     table['FRST_DTE'] = pd.to_datetime(table['FRST_DTE'])
     table['LAST_ACTIVITY_DATE'] = pd.to_datetime(table['LAST_ACTIVITY_DATE'])
@@ -682,7 +682,7 @@ def preprocess(table):
     newTable = table[[
         'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
         'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE','NUM_UNIT', 'OCC_STAT',  
-        'MI_TYPE', 'MI_PCT', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+        'MI_TYPE', 'MI_PCT',  'ORIG_DTE', 'FRST_DTE', 
         'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'LAST_STAT', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
     ]]
 
@@ -696,7 +696,7 @@ def preprocess_nl(table):
     table = table[[
         'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
         'CSCORE_B', 'FTHB_FLG', 'purpose', 'PROP_TYP', 'NUM_UNIT', 'occ_stat',
-        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE',
+        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'ORIG_DTE', 'FRST_DTE',
         'LAST_RT', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'ORIG_VAL', 'LAST_STAT' 
     ]].rename(columns={
         'orig_rt': 'ORIG_RATE', 'orig_amt': 'ORIG_AMOUNT', 'orig_trm': 'ORIG_TERM',
@@ -706,7 +706,7 @@ def preprocess_nl(table):
         
     })
     
-    table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
+    #table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
     table['ORIG_DTE'] = pd.to_datetime(table['ORIG_DTE'])
     table['FRST_DTE'] = pd.to_datetime(table['FRST_DTE'])
     table['LAST_ACTIVITY_DATE'] = pd.to_datetime(table['LAST_ACTIVITY_DATE'])
@@ -730,7 +730,7 @@ def preprocess_nl(table):
     newTable = table[[
         'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
         'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE','NUM_UNIT', 'OCC_STAT',  
-        'MI_TYPE',  'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+        'MI_TYPE', 'ORIG_DTE', 'FRST_DTE', 
         'LAST_RATE','MI_PCT', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'Ongoing', 'Current_DLQ', 'LAST_STAT'
     ]]
 
