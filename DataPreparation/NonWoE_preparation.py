@@ -15,15 +15,15 @@ def preprocess_NoWoE(path, labelled):
         table = table[[
             'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', # 'CSCORE_C', 
             'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'NUM_UNIT', 
-            'OCC_Principal', 'OCC_Second', 'OCC_Investor', 'MI_PCT', 'DLQ_FLAG', 'Ongoing', 
-            'Current_DLQ', 'Prepaid_Matured']]
+            'OCC_Principal', 'OCC_Second', 'OCC_Investor', 'MI_PCT', 'DLQ_FLAG',  'Ongoing'
+            ]]
 
         # Definition of Bad Loans: once had a 30-day delinquency in performance history
         # Definition of Good Loans: no delinquency and continuous payments up to current
         table = table[ (table['DLQ_FLAG'] == 1) | ( (table['DLQ_FLAG'] == 0) & (table['Ongoing'] == 1) ) ]
 
-        X = table.drop(columns=['DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured'])
-        y = table['DLQ_FLAG']
+        X = table.drop(columns=['DLQ_FLAG', 'Ongoing'])
+        y = table['DLQ_FLAG'].rename({'DLQ_FLAG': 'DLQ_90_FLAG'},axis=1)
 
         num_col = ['ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', # 'CSCORE_C', 
         'NUM_UNIT', 'MI_PCT']
@@ -37,8 +37,8 @@ def preprocess_NoWoE(path, labelled):
         table = table[[
             'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', # 'CSCORE_C', 
             'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'NUM_UNIT', 
-            'OCC_Principal', 'OCC_Second', 'OCC_Investor', 'MI_PCT', 'Ongoing', 
-            'Current_DLQ', 'Prepaid_Matured']]
+            'OCC_Principal', 'OCC_Second', 'OCC_Investor', 'MI_PCT' 
+            ]]
         num_col = ['ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', # 'CSCORE_C', 
         'NUM_UNIT', 'MI_PCT']
         cat_col = ['FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'OCC_Principal', 'OCC_Second', 'OCC_Investor']
@@ -77,9 +77,9 @@ def preprocess_data(table, labelled):
 
     n_row, n_col = year_table.shape
     if labelled:
-        n_dlq = sum(year_table['DLQ_FLAG'])
+        #n_dlq = sum(year_table['DLQ_FLAG'])
         print("this dataset is labelled")
-        print(f"Delinquency percentage: {round(n_dlq / n_row * 100, 2)} %")
+        #print(f"Delinquency percentage: {round(n_dlq / n_row * 100, 2)} %")
     else:
         print("this dataset is not labelled")
     print(f"Number of rows: {n_row}")
