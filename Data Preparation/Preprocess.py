@@ -3,14 +3,14 @@ import numpy as np
 
 
 
-def preprocess_data(file_year, NoWoE, labelled):
+def preprocess_data(file_year, labelled):
     year_table = pd.DataFrame()
 
     for i in range (1, 5):
         
         file_name = f"{file_year}Q{i}_stat.csv"
         print (file_name)
-        quarter_table = preprocess(pd.read_csv(file_name, low_memory=False), NoWoE, labelled)
+        quarter_table = preprocess(pd.read_csv(file_name, low_memory=False), labelled)
         
         if year_table.empty:
             year_table = quarter_table
@@ -541,7 +541,7 @@ def data_preparation(table, file_name):
 
 
 
-def preprocess(table, one_hot_encoding):
+def preprocess(table):
     
     table = table[[
         'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
@@ -577,25 +577,25 @@ def preprocess(table, one_hot_encoding):
     table['MI_PCT'] = table['MI_PCT'].fillna(0)
 
     table['FTHB_FLAG'] = table['FTHB_FLAG'].replace({'Y': 1, 'N': 0})
-    if one_hot_encoding:
-        # Check Glossary #27
-        table['PUR_Cash_out'] = (table['PURPOSE'] == 'C').astype(int)
-        table['PUR_Refinance'] = (table['PURPOSE'] == 'R').astype(int)
-        table['PUR_Purchase'] = (table['PURPOSE'] == 'P').astype(int)
-        # Check Glossary #28
-        table['PRO_Condominium'] = (table['PROP_TYPE'] == 'CO').astype(int)
-        table['PRO_Co_operative'] = (table['PROP_TYPE'] == 'CP').astype(int)
-        table['PRO_Planned_Urban'] = (table['PROP_TYPE'] == 'PU').astype(int)
-        table['PRO_Manufact_Home'] = (table['PROP_TYPE'] == 'MH').astype(int)
-        table['PRO_Single_Family'] = (table['PROP_TYPE'] == 'SF').astype(int)
-        # Check Glossary #30
-        table['OCC_Principal'] = (table['OCC_STAT'] == 'P').astype(int)
-        table['OCC_Second'] = (table['OCC_STAT'] == 'S').astype(int)
-        table['OCC_Investor'] = (table['OCC_STAT'] == 'I').astype(int)
-        # Check Glossary #73
-        table['MI_Borrower'] = (table['MI_TYPE'] == 'BPMI').astype(int)
-        table['MI_Lender'] = (table['MI_TYPE'] == 'LPMI').astype(int)
-        table['MI_Investor'] = (table['MI_TYPE'] == 'IPMI').astype(int)  # seems trivial
+   
+    # Check Glossary #27
+    table['PUR_Cash_out'] = (table['PURPOSE'] == 'C').astype(int)
+    table['PUR_Refinance'] = (table['PURPOSE'] == 'R').astype(int)
+    table['PUR_Purchase'] = (table['PURPOSE'] == 'P').astype(int)
+    # Check Glossary #28
+    table['PRO_Condominium'] = (table['PROP_TYPE'] == 'CO').astype(int)
+    table['PRO_Co_operative'] = (table['PROP_TYPE'] == 'CP').astype(int)
+    table['PRO_Planned_Urban'] = (table['PROP_TYPE'] == 'PU').astype(int)
+    table['PRO_Manufact_Home'] = (table['PROP_TYPE'] == 'MH').astype(int)
+    table['PRO_Single_Family'] = (table['PROP_TYPE'] == 'SF').astype(int)
+    # Check Glossary #30
+    table['OCC_Principal'] = (table['OCC_STAT'] == 'P').astype(int)
+    table['OCC_Second'] = (table['OCC_STAT'] == 'S').astype(int)
+    table['OCC_Investor'] = (table['OCC_STAT'] == 'I').astype(int)
+    # Check Glossary #73
+    table['MI_Borrower'] = (table['MI_TYPE'] == 'BPMI').astype(int)
+    table['MI_Lender'] = (table['MI_TYPE'] == 'LPMI').astype(int)
+    table['MI_Investor'] = (table['MI_TYPE'] == 'IPMI').astype(int)  # seems trivial
 
     table['DLQ_FLAG'] = table[['F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE']].notna().any(axis=1).astype(int)
 
@@ -613,23 +613,14 @@ def preprocess(table, one_hot_encoding):
     table['NET_LOSS'] = table['NET_LOSS'].fillna(0)
     table['NET_SEV'] = table['NET_SEV'].fillna(0)
 
-    if one_hot_encoding:
-        newTable = table[[
-            'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
-            'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'PRO_Condominium', 'PRO_Co_operative', 'PRO_Planned_Urban', 
-            'PRO_Manufact_Home', 'PRO_Single_Family', 'NUM_UNIT', 'OCC_Principal', 'OCC_Second', 'OCC_Investor', 
-            'MI_PCT', 'MI_Borrower', 'MI_Lender', 'MI_Investor', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
-            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 
-            'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
-        ]]
-    else:
-         newTable = table[[
-            'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
-            'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 
-            'MI_TYPE','AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
-            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 
-            'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
-        ]]
+    newTable = table[[
+        'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
+        'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'PRO_Condominium', 'PRO_Co_operative', 'PRO_Planned_Urban', 
+        'PRO_Manufact_Home', 'PRO_Single_Family', 'NUM_UNIT', 'OCC_Principal', 'OCC_Second', 'OCC_Investor', 
+        'MI_PCT', 'MI_Borrower', 'MI_Lender', 'MI_Investor', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+        'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 
+        'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
+    ]]
     
     del table
     # print("The total number of NA is ", sum(newTable.isna().sum()))
