@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+import pickle
 
 from optbinning import OptimalBinning
 
@@ -8,11 +9,11 @@ from optbinning import OptimalBinning
 def preprocess_WoE(file_years, labelled):
     #not sure how this works Preprocess_WoE.data_preparation(file_number)
     processed_df_1 = yearly_data(file_years, labelled)
-
+    processed_df = processed_df.rename(columns={'PURPOSE':'PUR', 'PROP_TYPE':'PRO','MI_TYPE':'MI','OCC_STAT':'OCC'})
     
     if labelled:
         processed_df = processed_df_1[(processed_df_1['DLQ_FLAG'] == 1) | ( processed_df_1['DLQ_FLAG'] == 0) & (processed_df_1['Ongoing'] == 1)]
-        processed_df = processed_df.rename(columns={'PURPOSE':'PUR', 'PROP_TYPE':'PRO','MI_TYPE':'MI','OCC_STAT':'OCC'})
+        
         
         RELEVANT_COLUMNS = [
         'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO',
@@ -59,6 +60,7 @@ def preprocess_WoE(file_years, labelled):
 
         for col in NUMERICAL_COLUMNS:
 
+            
             optb = OptimalBinning(name=col, dtype="numerical", solver="cp")
             optb.fit(processed_df[col], processed_df["DLQ_FLAG"])
         
@@ -70,8 +72,23 @@ def preprocess_WoE(file_years, labelled):
 
         
     
-   #else:
-       # processed_df = processed_df_1.copy()
+    else:
+        path = ""
+        with open(path, "rb") as f:
+            # Load pre-trained WoE mappings
+            binning_models = pickle.load(f)  
+
+        processed_df = processed_df_1.copy()
+
+        num_col = ["ORIG_RATE","CSCORE_B","OLTV"]
+        processed_df = processed_df[num_col]
+
+        transformed_columns = {}
+
+        for col in num_col:
+            optb = binning_models[col]
+            transformed_columns[col] = optb.transform(processed_df[col], metric="woe")
+        opt_bin_data = pd.DataFrame(transformed_columns)
     
     
     
@@ -653,7 +670,7 @@ def preprocess(table):
     table['MI_PCT'] = table['MI_PCT'].fillna(0)
 
     table['FTHB_FLAG'] = table['FTHB_FLAG'].replace({'Y': 1, 'N': 0})
-    table['DLQ_FLAG'] = table[['F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE']].notna().any(axis=1).astype(int)
+    table['DLQ_FLAG'] = table['F90_DTE'].notna().astype(int)
 
     table['Ongoing'] = (table['LAST_STAT'] == 'C').astype(int)  
     table['Current_DLQ'] = table['LAST_STAT'].apply(lambda x: int(x) if x.isdigit() else 0) 

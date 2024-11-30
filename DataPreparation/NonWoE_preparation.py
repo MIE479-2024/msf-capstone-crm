@@ -656,8 +656,9 @@ def preprocess(table):
     table['MI_Lender'] = (table['MI_TYPE'] == 'LPMI').astype(int)
     table['MI_Investor'] = (table['MI_TYPE'] == 'IPMI').astype(int)  # seems trivial
 
-    table['DLQ_FLAG'] = table[['F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE']].notna().any(axis=1).astype(int)
-
+    #table['DLQ_FLAG'] = table[['F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE']].notna().any(axis=1).astype(int)
+    table['DLQ_FLAG'] = table['F90_DTE'].notna().astype(int)
+    
     table['Ongoing'] = (table['LAST_STAT'] == 'C').astype(int)
     table['Current_DLQ'] = table['LAST_STAT'].apply(lambda x: int(x) if x.isdigit() else 0)
     table['Prepaid_Matured'] = (table['LAST_STAT'] == 'P').astype(int)
