@@ -8,8 +8,8 @@ from optbinning import OptimalBinning
 
 def preprocess_WoE(path, labelled):
     processed_df_1 = data_preprocess(path)#not sure how this works Preprocess_WoE.data_preparation(file_number)
-    processed_df_1 = yearly_data(processed_df_1, labelled)
-    processed_df = processed_df.rename(columns={'PURPOSE':'PUR', 'PROP_TYPE':'PRO','MI_TYPE':'MI','OCC_STAT':'OCC'})
+    processed_df_1= yearly_data(processed_df_1, labelled)
+    processed_df_1 = processed_df_1.rename(columns={'PURPOSE':'PUR', 'PROP_TYPE':'PRO','MI_TYPE':'MI','OCC_STAT':'OCC'})
     
     if labelled:
         processed_df = processed_df_1[(processed_df_1['DLQ_FLAG'] == 1) | ( processed_df_1['DLQ_FLAG'] == 0) & (processed_df_1['Ongoing'] == 1)]
