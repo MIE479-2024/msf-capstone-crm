@@ -22,10 +22,10 @@ def preprocess_WoE(path, labelled):
          'DLQ_FLAG'
             ]
         
-        processed_df = processed_df[RELEVANT_COLUMNS]
+        processed_df = processed_df[RELEVANT_COLUMNS].rename({'DLQ_FLAG': 'DLQ_90_FLAG'},axis=1)
         
 
-        CAT_COLUMNS = [
+        '''CAT_COLUMNS = [
             'PUR',
             'PRO',
             'OCC',
@@ -41,12 +41,12 @@ def preprocess_WoE(path, labelled):
             
             
             opt_bin_data = processed_df.copy()
-            opt_bin_data[col] = optb.transform(opt_bin_data[col], metric="woe")
+            opt_bin_data[col] = optb.transform(opt_bin_data[col], metric="woe")'''
             
             
        
         
-        NUMERICAL_COLUMNS = [
+        '''NUMERICAL_COLUMNS = [
         "ORIG_RATE",
         "ORIG_AMOUNT",	
         "ORIG_TERM",
@@ -56,16 +56,19 @@ def preprocess_WoE(path, labelled):
         "CSCORE_B", 
         "CSCORE_C",
         "NUM_UNIT",
-        "MI_PCT"]
+        "MI_PCT"]'''
+        rev_col = ["ORIG_RATE","CSCORE_B","OLTV"]
 
-        for col in NUMERICAL_COLUMNS:
+
+        for col in rev_col:
 
             
             optb = OptimalBinning(name=col, dtype="numerical", solver="cp")
-            optb.fit(processed_df[col], processed_df["DLQ_FLAG"])
+            optb.fit(processed_df[col], processed_df["DLQ_90_FLAG"])
         
             opt_bin_data = processed_df.copy()
             opt_bin_data[col] = optb.transform(processed_df[col], metric="woe")
+        
 
         
         
