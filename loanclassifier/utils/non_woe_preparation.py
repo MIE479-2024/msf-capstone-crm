@@ -1,12 +1,18 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-
+import warnings
 
 def preprocess_NoWoE(data, labelled):
     data = filter_columns(data).astype(float)
+    orig_length = len(data)
     if labelled:
         data = data[ (data['DLQ_90_FLAG'] == 1) | ( (data['DLQ_90_FLAG'] == 0) & (data['Ongoing'] == 1) ) ]
-        #TODO: add print statement
+        warnings.warn("\nWhen testing on labelled data, dataset is filtered " +
+                      "to include loans which match either of the following conditions: \n" +
+                      "\t (i) Loan is 90 day deliquent or \n \t(ii) Loan is not 90 day deliquent " +
+                      "but Ongoing.\nOut of the provided dataset " + str(len(data)) + " out of " + 
+                      str(orig_length) + " loans match this definition.")
+
     num_col = [
         'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B',
         'NUM_UNIT', 'MI_PCT'
