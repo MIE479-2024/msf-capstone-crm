@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+
+
 def data_preprocess(path):
     lppub_column_names = ["POOL_ID", "LOAN_ID", "ACT_PERIOD", "CHANNEL", "SELLER", "SERVICER",
                       "MASTER_SERVICER", "ORIG_RATE", "CURR_RATE", "ORIG_UPB", "ISSUANCE_UPB",
@@ -65,24 +67,12 @@ def data_preprocess(path):
                         "DEAL_NAME": str, "RE_PROCS_FLAG": str, "ADR_TYPE": str, "ADR_COUNT": "Int64", "ADR_UPB": float, 
                         "PAYMENT_DEFERRAL_MOD_EVENT_FLAG": str, "INTEREST_BEARING_UPB": float}
 
-    
-    
-    
-    '''file_number = 84
-    file_year = file_number // 4
-    file_year = f'{file_year:02}'
-    file_year = f'20{file_year}'
-    file_qtr = (file_number % 4) + 1
-    file_qtr = f'Q{file_qtr}'
-    file_name = f'{file_year}{file_qtr}.csv'
-    print(file_name)'''
 
     chunks = pd.read_csv(path, delimiter='|', names=lppub_column_names, dtype=lppub_column_classes, chunksize=5000000)
     export = pd.DataFrame()
 
 
     for table in chunks:
-        #print("New iteration started")
         processed = data_preparation(table)
         if export.empty:
             export = processed
@@ -91,9 +81,6 @@ def data_preprocess(path):
 
     export = export.drop_duplicates(subset=['LOAN_ID'], keep='last')
     return export
-    #path = "../dataset/"
-    #new_file_name = path + f"stat.csv"
-    #export.to_csv(new_file_name, sep=",", na_rep="NULL", float_format='%.2f', index=False, quoting=1)
 
 
 
@@ -183,23 +170,10 @@ def data_preparation(table):
 
     del lppub_base
 
-
-    #acquisition_year = file_name[:4]
-    #acquisition_qtr = file_name[4:6]
     
     performanceFile['servicer'] = performanceFile['servicer'].astype(str)
     performanceFile['z_zb_code'] = performanceFile['z_zb_code'].astype(str)
     
-    '''if acquisition_qtr == 'Q1':
-        acquisition_month = '03'
-    elif acquisition_qtr == 'Q2':
-        acquisition_month = '06'
-    elif acquisition_qtr == 'Q3':
-        acquisition_month = '09'
-    else:
-        acquisition_month = '12'
-    
-    acquisition_date = f"{acquisition_year}-{acquisition_month}-01"  # 2023-09-01'''
     
     # Convert all date fields to YYYY-MM-DD format
     acquisitionFile = acquisitionFile.rename(columns={
@@ -219,7 +193,6 @@ def data_preparation(table):
 
     baseTable1 = acquisitionFile.copy()
     
-    '''baseTable1['AQSN_DTE'] = acquisition_date'''
     
     baseTable1['MI_TYPE'] = baseTable1['MI_TYPE'].replace({
         '1': 'BPMI',  # Borrower Paid Mortgage Insurance
