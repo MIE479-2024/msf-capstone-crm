@@ -35,10 +35,8 @@ def get_predictions(
     for item in models:
         model_name, model = item["name"],item["model"]
         model_data = woe_data if "woe" in model_name else std_data
-        if labelled:
-            X, Y = model_data.drop(columns=["DLQ_90_FLAG"]), model_data["DLQ_90_FLAG"]
-        else:
-            X = model_data 
+        X = model_data.drop(columns=["DLQ_90_FLAG",["LOAN_ID"]])
+        Y = model_data["DLQ_90_FLAG"]
         if isinstance(model, LinearSVC):
             predicted_proba = model._predict_proba_lr(X)[:, 1]
         else:
@@ -58,6 +56,7 @@ def get_predictions(
             "Precision": precision,
             "F1-Score": f1,
             "Predicted Probabilities": predicted_proba,
+            "Loan ID": model_data["LOAN_ID"],
             "Predicted Classes": predicted_classes
         }
 

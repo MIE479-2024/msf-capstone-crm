@@ -21,6 +21,7 @@ def preprocess_NoWoE(data, labelled):
     output = pd.DataFrame(scaled_numeric, columns=num_col)
     output = pd.concat([output, data[cat_col]], axis=1)
     output['DLQ_90_FLAG'] = data["DLQ_90_FLAG"]
+    output['LOAN_ID'] = data['LOAN_ID']
     return output
 
 

@@ -23,7 +23,7 @@ def preprocess_WoE(data, labelled):
         optb = binning_models[col]
         transformed_columns[col] = optb.transform(data[col], metric="woe")
     opt_bin_data = pd.DataFrame(transformed_columns)
-
+    opt_bin_data["LOAN_ID"] = data["LOAN_ID"]
     return opt_bin_data
 
 def filter_woe_columns(table):
