@@ -36,7 +36,7 @@ def get_predictions(
         model_name, model = item["name"],item["model"]
         model_data = woe_data if "woe" in model_name else std_data
         if labelled:
-            X, Y = model_data.drop(columns=["Y"]), model_data["Y"]
+            X, Y = model_data.drop(columns=["DLQ_FLAG"]), model_data["DLQ_FLAG"]
         else:
             X = model_data 
         if isinstance(model, LinearSVC):
