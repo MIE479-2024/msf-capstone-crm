@@ -4,8 +4,15 @@ import pickle
 
 WOE_COLUMNS = ["ORIG_RATE","CSCORE_B","OLTV"]
 
-def preprocess_WoE(data):
+def preprocess_WoE(data, labelled):
     data = filter_woe_columns(data)
+    data = data.astype(float)
+
+    if labelled:
+        data = data[ (data['DLQ_90_FLAG'] == 1) | ( (data['DLQ_90_FLAG'] == 0) & (data['Ongoing'] == 1) ) ]
+        # TODO: add a print here 
+
+    
     path = "models/binning_models.pkl"
     with open(path, "rb") as f:
         binning_models = pickle.load(f)  
@@ -33,7 +40,7 @@ def filter_woe_columns(table):
     table['ORIG_RATE'] = table['ORIG_RATE'].fillna(table['ORIG_RATE'].median())
     table['CSCORE_B'] = table['CSCORE_B'].fillna(table['CSCORE_B'].median())
     table['OLTV'] = table['OLTV'].fillna(table['OLTV'].median())
-    table['DLQ_FLAG'] = table['F90_DTE'].notna().astype(int)
+    table['DLQ_90_FLAG'] = table['F90_DTE'].notna().astype(int)
     table['Ongoing'] = (table['LAST_STAT'] == 'C').astype(int)  
-    newTable = table[ ['LOAN_ID'] + WOE_COLUMNS + ['DLQ_FLAG', 'Ongoing']]
+    newTable = table[ ['LOAN_ID'] + WOE_COLUMNS + ['DLQ_90_FLAG', 'Ongoing']]
     return newTable
