@@ -36,10 +36,9 @@ class LoanClassifier():
 
 
     @property
-    def metrics(self):
+    def classification_report(self):
         if not self.models_evaluated:
             raise RuntimeError("Metrics are not available until models are evaluated.")
-        
         return pd.DataFrame(self._metrics).set_index("Model")
     
 
@@ -59,9 +58,9 @@ class LoanClassifier():
         if not self.models_evaluated:
             raise RuntimeError("ROC Curve is not available until models are evaluated. To evaluate selected classifiers, first call .evaluate().")
         
-        return plot_roc_curve(self._metrics, self.std_process_data["DLQ_90_FLAG"])
+        return plot_roc_curve(self.models_list, self._predictions, self.std_process_data["DLQ_90_FLAG"])
 
-        
+
     def _read_models(self, models: str) -> list:
         """
         Load scikit-learn models from pkl.

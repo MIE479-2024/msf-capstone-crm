@@ -5,7 +5,8 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     roc_curve,
-    precision_score
+    precision_score,
+    classification_report
 )
 import pandas as pd
 import matplotlib as mpl
@@ -38,42 +39,52 @@ def get_predictions(
         model_data = woe_data if "woe" in model_name else std_data
         X = model_data.drop(columns=["DLQ_90_FLAG"])
         Y = model_data["DLQ_90_FLAG"]
+
+
         if isinstance(model, LinearSVC):
             predicted_proba = model._predict_proba_lr(X)[:, 1]
         else:
             predicted_proba = model.predict_proba(X)[:, 1]
         predicted_classes = (predicted_proba >= 0.5).astype(int)
-        
+        auc, accuracy = None, None
         if labelled:
             auc = roc_auc_score(Y, predicted_proba)
             accuracy = accuracy_score(Y, predicted_classes)
-            for class_label in [0, 1]:  
-                class_indices = (Y == class_label)
-                print(class_label, sum(class_indices))
-                recall = recall_score(Y[class_indices], predicted_classes[class_indices], zero_division=0)
-                precision = precision_score(Y[class_indices], predicted_classes[class_indices], zero_division=0)
-                f1 = f1_score(Y[class_indices], predicted_classes[class_indices], zero_division=0)
-                
-                results.append({
-                    "Model": model_name,
-                    "Class": class_label,
-                    "AUC": auc,   
-                    "Accuracy": accuracy,
-                    "Recall": recall,
-                    "Precision": precision,
-                    "F1-Score": f1
-                })
+            class_report = classification_report(Y, predicted_classes, output_dict=True, zero_division=0)
+            for class_label, metrics in class_report.items():
+                if class_label in ["0.0", "1.0"]:
+                    results.append({
+                        "Model": model_name,
+                        "Class": int(float(class_label)),
+                        "AUC": auc,
+                        "Accuracy": accuracy,
+                        "Recall": metrics["recall"],
+                        "Precision": metrics["precision"],
+                        "F1-Score": metrics["f1-score"]
+                    })
+        else: 
+            total_loans = len(X)
+            loans_accepted = (predicted_classes == 1).sum()
+            loans_rejected = (predicted_classes == 0).sum()
 
+            results.append({
+                "Model": model_name,
+                "Total Loans": total_loans,
+                "Non-Default": loans_accepted,
+                "Default": loans_rejected,
+                "Default Percentage": round(loans_rejected/total_loans, 4)*100
+            })
         loan_results[f"{model_name}_Predicted_Probabilities"] = predicted_proba
         loan_results[f"{model_name}_Predicted_Classes"] = predicted_classes
 
     return results, loan_results
 
-def plot_roc_curve(results, Y_true):
+def plot_roc_curve(models, results, Y_true):
     """Plot ROC curves for all models."""
     fig, ax = plt.subplots(figsize=(10, 8))
-    for model_name, result in results.items():
-        y_pred_proba = result["Predicted Probabilities"]
+    for model in models:
+        model_name = model["name"]
+        y_pred_proba = results[model_name+"_Predicted_Probabilities"]
         fpr, tpr, _ = roc_curve(Y_true, y_pred_proba)        
         plt.plot(fpr, tpr, label=f"{model_name}")
 
