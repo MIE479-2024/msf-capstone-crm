@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 
 def preprocess_WoE(data, labelled):
-    processed_df_1= yearly_data(processed_df_1, labelled)
+    processed_df_1= yearly_data(data, labelled)
     processed_df_1 = processed_df_1.rename(columns={'PURPOSE':'PUR', 'PROP_TYPE':'PRO','MI_TYPE':'MI','OCC_STAT':'OCC'})
     
     if labelled:
