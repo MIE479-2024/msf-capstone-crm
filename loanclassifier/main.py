@@ -31,7 +31,7 @@ class LoanClassifier():
             One of the following options: ["all", "woe", "xgboost", "svm", "woe_lr", "woe_svm"].
         """
         self._read_models(models=models)
-        self._metrics, self._predictions = get_predictions(
+        self._report, self._metrics, self._predictions = get_predictions(
             self.models_list,
             self.std_process_data,
             self.woe_process_data,
@@ -41,10 +41,19 @@ class LoanClassifier():
 
 
     @property
-    def classification_report(self):
+    def classification_metrics(self):
+        if not self.labelled:
+            raise RuntimeError("Classification metrics are only available for labelled data, i.e. loan data with performance variables.")
         if not self.models_evaluated:
             raise RuntimeError("Metrics are not available until models are evaluated.")
         return pd.DataFrame(self._metrics).set_index("Model")
+
+
+    @property
+    def classification_report(self):
+        if not self.models_evaluated:
+            raise RuntimeError("Classification report is not available until models are evaluated.")
+        return pd.DataFrame(self._report).set_index("Model")
     
 
     @property
@@ -98,3 +107,20 @@ class LoanClassifier():
             with open(file, 'rb') as f:
                 model = pickle.load(f)
             self.models_list.append({'name': model_name[:-4], 'model': model})
+
+    
+    def save_predictions(self, output_path: str):
+        """
+        Save the original data combined with predictions to a specified file path.
+
+        :param output_path: Path to save the combined data with predictions.
+        """
+        if not self.models_evaluated:
+            raise RuntimeError("You must evaluate models before saving predictions.")
+
+        predictions_df = self.predictions
+
+        combined_data = self.data.merge(predictions_df, on="LOAN_ID", how="left")
+
+        combined_data.to_csv(output_path, index=False)
+        print(f"Predictions saved successfully to {output_path}.")
