@@ -1,6 +1,6 @@
 from utils.non_woe_preparation import preprocess_NoWoE
 from utils.woe_preparation import preprocess_WoE
-from utils.preprocess_general import data_preprocess
+from utils.preprocess_general import preprocess
 from utils.predict import get_predictions, plot_roc_curve
 import pandas as pd
 import pickle
@@ -9,9 +9,9 @@ class LoanClassifier():
     """
     """
     def __init__(self, data_path: str, labelled: bool):
-        self.data = data_preprocess(data_path)
-        self.std_process_data = preprocess_NoWoE(self.data, labelled=labelled)
-        self.woe_process_data = preprocess_WoE(self.data, labelled=labelled)
+        self.data = pd.read_csv(data_path)
+        self.std_process_data = preprocess_NoWoE(self.data, self.labelled)
+        self.woe_process_data = preprocess_WoE(self.data, self.labelled)
         self._predictions = None  
         self.models_evaluated = False   
         self.labelled = labelled 
