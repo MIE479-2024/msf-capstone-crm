@@ -4,12 +4,17 @@ from utils.preprocess_general import preprocess
 from utils.predict import get_predictions, plot_roc_curve
 import pandas as pd
 import pickle
+import warnings 
 
+
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", message="`Booster.save_model`")
+warnings.filterwarnings("ignore", module="xgboost")
 class LoanClassifier():
     """
     """
     def __init__(self, data_path: str, labelled: bool):
-        self.data = pd.read_csv(data_path, index_col="LOAN_ID")
+        self.data = pd.read_csv(data_path, index_col="LOAN_ID", low_memory=False)
         self.labelled = labelled 
         self.std_process_data = preprocess_NoWoE(self.data, self.labelled)
         self.woe_process_data = preprocess_WoE(self.data, self.labelled)
@@ -75,21 +80,21 @@ class LoanClassifier():
                  '["all", "woe", "xgboost", "svm", "woe_lr", "woe_svm"]')
             )
         if models == "all":
-            model_names = ["linear_svm_3f_woe.pkl", "linear_svm_2021.pkl",
-                           "log_reg_3f_woe.pkl", "xgboost_2021.pkl"]
+            model_names = ["Linear_SVM_WoE.pkl", "Linear_SVM.pkl",
+                           "Logistic_Regression_WoE.pkl", "XGBoost.pkl"]
         if models == "woe": 
-            model_names = ["linear_svm_3f_woe.pkl", "log_reg_3f_woe.pkl"]
+            model_names = ["Linear_SVM_WoE.pkl", "Logistic_Regression_WoE.pkl"]
         if models == "xgboost":
-            model_names = ["xgboost_2021.pkl"]
+            model_names = ["XGBoost.pkl"]
         if models == "svm":
-            model_names = ["linear_svm_2021.pkl"]
+            model_names = ["Linear_SVM.pkl"]
         if models == "woe_svm":
-            model_names = ["linear_svm_3f_woe.pkl"]
+            model_names = ["Linear_SVM_WoE.pkl"]
         if models == "woe_lr":
-            model_names = ["log_reg_3f_woe.pkl"]
+            model_names = ["Logistic_Regression_WoE.pkl"]
         self.models_list = []
         for model_name in model_names:
             file = "./models/" + model_name
             with open(file, 'rb') as f:
                 model = pickle.load(f)
-            self.models_list.append({'name': model_name, 'model': model})
+            self.models_list.append({'name': model_name[:-4], 'model': model})

@@ -36,7 +36,7 @@ def get_predictions(
     loan_results = pd.DataFrame(index=std_data.index)
     for item in models:
         model_name, model = item["name"],item["model"]
-        model_data = woe_data if "woe" in model_name else std_data
+        model_data = woe_data if "woe" in model_name.lower() else std_data
         X = model_data.drop(columns=["DLQ_90_FLAG"])
         Y = model_data["DLQ_90_FLAG"]
 
@@ -64,8 +64,8 @@ def get_predictions(
                     })
         else: 
             total_loans = len(X)
-            loans_accepted = (predicted_classes == 1).sum()
-            loans_rejected = (predicted_classes == 0).sum()
+            loans_accepted = (predicted_classes == 0).sum()
+            loans_rejected = (predicted_classes == 1).sum()
 
             results.append({
                 "Model": model_name,
