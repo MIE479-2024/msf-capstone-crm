@@ -33,6 +33,7 @@ def get_predictions(
     labelled: bool,
 ) -> dict:
     results = []
+    report = []
     loan_results = pd.DataFrame(index=std_data.index)
     for item in models:
         model_name, model = item["name"],item["model"]
@@ -62,22 +63,22 @@ def get_predictions(
                         "Precision": metrics["precision"],
                         "F1-Score": metrics["f1-score"]
                     })
-        else: 
-            total_loans = len(X)
-            loans_accepted = (predicted_classes == 0).sum()
-            loans_rejected = (predicted_classes == 1).sum()
+        
+        total_loans = len(X)
+        loans_accepted = (predicted_classes == 0).sum()
+        loans_rejected = (predicted_classes == 1).sum()
 
-            results.append({
-                "Model": model_name,
-                "Total Loans": total_loans,
-                "Non-Default": loans_accepted,
-                "Default": loans_rejected,
-                "Default Percentage": round(loans_rejected/total_loans, 4)*100
-            })
+        report.append({
+            "Model": model_name,
+            "Total Loans": total_loans,
+            "Non-Default": loans_accepted,
+            "Default": loans_rejected,
+            "Default Percentage": round(loans_rejected/total_loans, 4)*100
+        })
         loan_results[f"{model_name}_Predicted_Probabilities"] = predicted_proba
         loan_results[f"{model_name}_Predicted_Classes"] = predicted_classes
 
-    return results, loan_results
+    return report, results, loan_results
 
 def plot_roc_curve(models, results, Y_true):
     """Plot ROC curves for all models."""
