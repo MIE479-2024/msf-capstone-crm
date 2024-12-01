@@ -20,7 +20,10 @@ def preprocess_WoE(data):
     return opt_bin_data
 
 def filter_woe_columns(table):
-    # TODO: add empty warnings
+    for column in ['orig_rt', 'oltv', 'CSCORE_B']:
+        if table[column].isna().all():
+            raise ValueError(f"The column '{column}' is completely empty, but required for classification models. Please provide valid data.")
+
     table = table[[
         'LOAN_ID', 'orig_rt', 'oltv', 'CSCORE_B', 'F90_DTE', 'LAST_STAT'
     ]].rename(columns={
