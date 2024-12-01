@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 
+
 WOE_COLUMNS = ["ORIG_RATE","CSCORE_B","OLTV"]
 
 def preprocess_WoE(data, labelled):
@@ -22,8 +23,8 @@ def preprocess_WoE(data, labelled):
     for col in WOE_COLUMNS:
         optb = binning_models[col]
         transformed_columns[col] = optb.transform(data[col], metric="woe")
-    opt_bin_data = pd.DataFrame(transformed_columns)
-    opt_bin_data["LOAN_ID"] = data["LOAN_ID"]
+    opt_bin_data = pd.DataFrame(transformed_columns, index=data.index)
+    opt_bin_data["DLQ_90_FLAG"] = data["DLQ_90_FLAG"]
     return opt_bin_data
 
 def filter_woe_columns(table):
@@ -32,7 +33,7 @@ def filter_woe_columns(table):
             raise ValueError(f"The column '{column}' is completely empty, but required for classification models. Please provide valid data.")
 
     table = table[[
-        'LOAN_ID', 'orig_rt', 'oltv', 'CSCORE_B', 'F90_DTE', 'LAST_STAT'
+        'orig_rt', 'oltv', 'CSCORE_B', 'F90_DTE', 'LAST_STAT'
     ]].rename(columns={
         'orig_rt': 'ORIG_RATE', 'oltv': 'OLTV'
     })
@@ -42,5 +43,5 @@ def filter_woe_columns(table):
     table['OLTV'] = table['OLTV'].fillna(table['OLTV'].median())
     table['DLQ_90_FLAG'] = table['F90_DTE'].notna().astype(int)
     table['Ongoing'] = (table['LAST_STAT'] == 'C').astype(int)  
-    newTable = table[ ['LOAN_ID'] + WOE_COLUMNS + ['DLQ_90_FLAG', 'Ongoing']]
+    newTable = table[ WOE_COLUMNS + ['DLQ_90_FLAG', 'Ongoing']]
     return newTable

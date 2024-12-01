@@ -9,13 +9,12 @@ class LoanClassifier():
     """
     """
     def __init__(self, data_path: str, labelled: bool):
-        self.data = pd.read_csv(data_path)
+        self.data = pd.read_csv(data_path, index_col="LOAN_ID")
+        self.labelled = labelled 
         self.std_process_data = preprocess_NoWoE(self.data, self.labelled)
         self.woe_process_data = preprocess_WoE(self.data, self.labelled)
         self._predictions = None  
         self.models_evaluated = False   
-        self.labelled = labelled 
-        self.evaluation_results = None
     
 
     def evaluate(self, models: str = "all"):
@@ -26,9 +25,9 @@ class LoanClassifier():
             models: str, default = "all"
             One of the following options: ["all", "woe", "xgboost", "svm", "woe_lr", "woe_svm"].
         """
-        self.models = self._read_models(models=models)
-        self._predictions = get_predictions(
-            self.models,
+        self._read_models(models=models)
+        self._metrics, self._predictions = get_predictions(
+            self.models_list,
             self.std_process_data,
             self.woe_process_data,
             self.labelled
@@ -37,21 +36,22 @@ class LoanClassifier():
 
 
     @property
-    def predictions_dict(self):
+    def metrics(self):
+        if not self.models_evaluated:
+            raise RuntimeError("Metrics are not available until models are evaluated.")
+        
+        return pd.DataFrame(self._metrics).set_index("Model")
+    
+
+    @property
+    def predictions(self):
         if not self.models_evaluated:
             raise RuntimeError("Predictions are not available until models are evaluated.")
         
         return self._predictions
 
-
-    @property
-    def predicted_classes(self):
-        if not self.models_evaluated:
-            raise RuntimeError("Predictions are not available until models are evaluated.")
-        
-        return self._predictions['Predicted Classes']
     
-
+    @property
     def roc_curve(self):
         if not self.labelled:
             raise RuntimeError("ROC Curve is only available for labelled data, i.e. loan data with performance variables.")
@@ -59,7 +59,7 @@ class LoanClassifier():
         if not self.models_evaluated:
             raise RuntimeError("ROC Curve is not available until models are evaluated. To evaluate selected classifiers, first call .evaluate().")
         
-        return plot_roc_curve(self.models, self.std_process_data["Y"])
+        return plot_roc_curve(self._metrics, self.std_process_data["DLQ_90_FLAG"])
 
         
     def _read_models(self, models: str) -> list:
@@ -90,7 +90,7 @@ class LoanClassifier():
             model_names = ["log_reg_3f_woe.pkl"]
         self.models_list = []
         for model_name in model_names:
-            file = "/models/" + model
+            file = "./models/" + model_name
             with open(file, 'rb') as f:
                 model = pickle.load(f)
             self.models_list.append({'name': model_name, 'model': model})

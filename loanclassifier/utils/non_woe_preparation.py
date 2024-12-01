@@ -4,7 +4,6 @@ from sklearn.preprocessing import StandardScaler
 
 def preprocess_NoWoE(data, labelled):
     data = filter_columns(data).astype(float)
-    
     if labelled:
         data = data[ (data['DLQ_90_FLAG'] == 1) | ( (data['DLQ_90_FLAG'] == 0) & (data['Ongoing'] == 1) ) ]
         #TODO: add print statement
@@ -18,10 +17,9 @@ def preprocess_NoWoE(data, labelled):
     ]
     scaler = StandardScaler()
     scaled_numeric = scaler.fit_transform(data[num_col])
-    output = pd.DataFrame(scaled_numeric, columns=num_col)
+    output = pd.DataFrame(scaled_numeric, columns=num_col, index=data.index)
     output = pd.concat([output, data[cat_col]], axis=1)
     output['DLQ_90_FLAG'] = data["DLQ_90_FLAG"]
-    output['LOAN_ID'] = data['LOAN_ID']
     return output
 
 
@@ -35,7 +33,7 @@ def filter_columns(table):
 
     
     table = table[[
-        'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
+        'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
         'CSCORE_B', 'FTHB_FLG', 'purpose', 'NUM_UNIT', 'occ_stat', 'mi_pct',
         'F30_DTE', 'F90_DTE', 'LAST_STAT'
     ]].rename(columns={
@@ -66,10 +64,9 @@ def filter_columns(table):
 
     # Select only required columns for output
     table = table[[
-        'LOAN_ID','ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B',
+        'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B',
         'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 
         'NUM_UNIT', 'OCC_Principal', 'OCC_Second', 'OCC_Investor', 
         'MI_PCT', 'DLQ_90_FLAG', 'Ongoing'
     ]]
-
     return table
