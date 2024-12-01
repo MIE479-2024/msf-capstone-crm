@@ -1,13 +1,8 @@
 import pandas as pd
 import numpy as np
-
 import pickle
-from preprocess_general import data_preprocess
-from optbinning import OptimalBinning
 
-
-def preprocess_WoE(path, labelled):
-    processed_df_1 = data_preprocess(path)#not sure how this works Preprocess_WoE.data_preparation(file_number)
+def preprocess_WoE(data, labelled):
     processed_df_1= yearly_data(processed_df_1, labelled)
     processed_df_1 = processed_df_1.rename(columns={'PURPOSE':'PUR', 'PROP_TYPE':'PRO','MI_TYPE':'MI','OCC_STAT':'OCC'})
     

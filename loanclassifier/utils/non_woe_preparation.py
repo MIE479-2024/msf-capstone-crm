@@ -4,10 +4,8 @@ import sys
 #sys.path.append('/Users/mengyanzhu/Documents/GitHub/msf-capstone-crm/')
 #from Preprocess import preprocess_data
 from sklearn.preprocessing import StandardScaler
-from preprocess_general import data_preprocess
 
 def preprocess_NoWoE(path, labelled):
-    table = data_preprocess(path)
     table= preprocess_data(table, labelled).dropna()
     if labelled:
         #table = pd.read_csv(file_name, low_memory=False).dropna()
