@@ -132,7 +132,7 @@ classifier.save_predictions(output_path="path/to/save_predictions.csv")
 ---
 ## Installation and Dependencies
 
-Clone the repository and change your directory to be `LoanClassifier/`. Then run the following.
+Clone the repository and change your directory to be `loanclassifier/`. Then run the following.
 
 ```bash
 python setup.py sdist
