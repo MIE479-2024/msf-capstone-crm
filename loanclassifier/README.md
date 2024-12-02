@@ -130,9 +130,12 @@ classifier.save_predictions(output_path="path/to/save_predictions.csv")
    ![image](https://github.com/user-attachments/assets/95004c68-c58f-456f-a96e-ddff445a7cfa)
 
 ---
-## Installation and Dependencies
-
-Clone the repository and change your directory to be `loanclassifier/`. Then run the following.
+## Installation
+Clone the repository and change your directory to be `loanclassifier/`. Install `setuptools` if you have not already done so using,
+```
+pip install setuptools
+```
+Then run the following.
 
 ```bash
 python setup.py sdist
@@ -152,7 +155,7 @@ import loan_classifier
 - Furthermore data _must_ contain the following columns for each classifier type:
     - WoE models:
     ```python
-    ["ORIG_RATE","CSCORE_B","OLTV"]
+    ["orig_rt","CSCORE_B","oltv"]
     ```
     - NonWoE models
     ```python
