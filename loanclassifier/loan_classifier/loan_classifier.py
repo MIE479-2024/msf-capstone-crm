@@ -103,7 +103,7 @@ class LoanClassifier():
             model_names = ["Logistic_Regression_WoE.pkl"]
         self.models_list = []
         for model_name in model_names:
-            file = "./models/" + model_name
+            file = "./../models/" + model_name
             with open(file, 'rb') as f:
                 model = pickle.load(f)
             self.models_list.append({'name': model_name[:-4], 'model': model})

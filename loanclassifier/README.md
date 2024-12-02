@@ -130,7 +130,7 @@ Alternatively, you can manually install the following,
 ```python
 pandas
 scikit-learn
-XGBoost
+xgboost
 matplotlib
 optbinning
 ```
