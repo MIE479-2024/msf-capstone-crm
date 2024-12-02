@@ -21,7 +21,9 @@ This package utilizes four pre-trained models for predictions, all trained on [F
 ## A note on WoE (Weight of Evidence)
 
 **Weight of Evidence (WoE)** is a feature transformation technique often used in credit scoring. It involves the segmentation of loan acquisition variables into bins followed by determining the strength and relationship of each predictor with the loan outcome. In particular it is defined as,
+
 $$WoE = ln(\frac{\text{Proportion of Good Loans}}{\text{Proportion of Good Loans}}) * 100$$
+
 This feature engineering technique helps,
 - Reduce the impact of outliers and overfitting.
 - Improve model interpretability.
@@ -106,7 +108,7 @@ classifier.save_predictions(output_path="path/to/save_predictions.csv")
 - **`utils/woe_preparation.py`**: Preprocessing functions for models using WoE.
 - **`utils/preprocess_general.py`**: General preprocessing functions.
 - **`utils/predict.py`**: Functions for generating predictions and plotting ROC curves.
-- **`models/`**: Directory containing pre-trained model files (`*.pkl`).
+- **`utils/models/`**: Directory containing pre-trained model files (`*.pkl`).
 - **`sample_data/`**: Example data following required format.
 ---
 
@@ -130,20 +132,18 @@ classifier.save_predictions(output_path="path/to/save_predictions.csv")
 ---
 ## Installation and Dependencies
 
-Clone the repository and ensure the required dependencies are installed. You can install required dependencies by running,
+Clone the repository and change your directory to be `LoanClassifier/`. Then run the following.
 
 ```bash
-pip install -r requirements.txt
+python setup.py sdist
+pip install .
 ```
 
-Alternatively, you can manually install the following,
+Your package is now ready to use. Import by writing,
 ```python
-pandas
-scikit-learn
-xgboost
-matplotlib
-optbinning
+import loan_classifier
 ```
+
 ---
 
 ## Notes
