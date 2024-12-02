@@ -7,6 +7,10 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     packages=find_packages(),
+    include_package_data=True,
+    package_data={
+        'utils': ['models/*.pkl'],  # Include pickle files from utils/models
+    },
     install_requires=[
         "pandas",
         "scikit-learn",

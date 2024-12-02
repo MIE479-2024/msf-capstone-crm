@@ -5,11 +5,18 @@ from utils.predict import get_predictions, plot_roc_curve
 import pandas as pd
 import pickle
 import warnings 
-
+import pkgutil
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", message="`Booster.save_model`")
 warnings.filterwarnings("ignore", module="xgboost")
+
+
+def load_model(model_name):
+    model_data = pkgutil.get_data('utils', f'models/{model_name}')
+    return pickle.loads(model_data)
+
+
 class LoanClassifier():
     """
     """
@@ -103,9 +110,7 @@ class LoanClassifier():
             model_names = ["Logistic_Regression_WoE.pkl"]
         self.models_list = []
         for model_name in model_names:
-            file = "./../models/" + model_name
-            with open(file, 'rb') as f:
-                model = pickle.load(f)
+            model = load_model(model_name)
             self.models_list.append({'name': model_name[:-4], 'model': model})
 
     

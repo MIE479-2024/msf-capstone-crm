@@ -1,9 +1,16 @@
 import pandas as pd
 import numpy as np
 import pickle
-
+import os
+import pkgutil
 
 WOE_COLUMNS = ["ORIG_RATE","CSCORE_B","OLTV"]
+
+def load_model(model_name):
+    model_data = pkgutil.get_data('utils', f'models/{model_name}')
+    return pickle.loads(model_data)
+
+
 
 def preprocess_WoE(data, labelled):
     data = filter_woe_columns(data)
@@ -13,10 +20,7 @@ def preprocess_WoE(data, labelled):
         data = data[ (data['DLQ_90_FLAG'] == 1) | ( (data['DLQ_90_FLAG'] == 0) & (data['Ongoing'] == 1) ) ]
         # TODO: add a print here 
 
-    
-    path = "models/binning_models.pkl"
-    with open(path, "rb") as f:
-        binning_models = pickle.load(f)  
+    binning_models = load_model('binning_models.pkl')
 
     transformed_columns = {}
 
