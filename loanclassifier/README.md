@@ -113,9 +113,19 @@ classifier.save_predictions(output_path="path/to/save_predictions.csv")
 ## Sample Outputs
 
 1. **Metrics**: Evaluation metrics for labelled datasets.
+   
+   ![image](https://github.com/user-attachments/assets/c115db3f-e583-4db8-945e-2b28ac1f67dd)
+
 2. **Classification Report**: Detailed model performance report.
+   
+   ![image](https://github.com/user-attachments/assets/517cb460-a0f6-44cf-9dfa-07821dfeda4f)
+
 3. **ROC Curve**: Visualization of model performance.
+   ![image](https://github.com/user-attachments/assets/262c9171-46c9-4b3b-9cf4-2cb9ccf64041)
+   
 4. **Predictions**: Loan-level delinquency predictions merged with the input dataset.
+   
+   ![image](https://github.com/user-attachments/assets/95004c68-c58f-456f-a96e-ddff445a7cfa)
 
 ---
 ## Installation and Dependencies
