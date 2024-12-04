@@ -1,10 +1,191 @@
 import pandas as pd
-import os
 import numpy as np
 
 
-### lppub_file -> table
-def data_preparation(table, file_name):
+def preprocess(table, one_hot_encoding=True):
+    
+    table = table[[
+        'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
+        'CSCORE_B', 'FTHB_FLG', 'purpose', 'PROP_TYP', 'NUM_UNIT', 'occ_stat',
+        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE',
+        'LAST_RT', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 
+        'F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE', 
+        'LAST_STAT', 'COMPLT_FLG', 'NET_LOSS', 'NET_SEV'
+    ]].rename(columns={
+        'orig_rt': 'ORIG_RATE', 'orig_amt': 'ORIG_AMOUNT', 'orig_trm': 'ORIG_TERM',
+        'oltv': 'OLTV', 'num_bo': 'NUM_BO', 'dti': 'DTI', 'FTHB_FLG': 'FTHB_FLAG',
+        'purpose': 'PURPOSE', 'PROP_TYP': 'PROP_TYPE', 'occ_stat': 'OCC_STAT', 
+        'mi_pct': 'MI_PCT', 'LAST_RT': 'LAST_RATE', 'COMPLT_FLG': 'COMPLETE_FLAG'
+    })
+    
+    table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
+    table['ORIG_DTE'] = pd.to_datetime(table['ORIG_DTE'])
+    table['FRST_DTE'] = pd.to_datetime(table['FRST_DTE'])
+    table['LAST_ACTIVITY_DATE'] = pd.to_datetime(table['LAST_ACTIVITY_DATE'])
+    table['F30_DTE'] = pd.to_datetime(table['F30_DTE'])
+    table['F60_DTE'] = pd.to_datetime(table['F60_DTE'])
+    table['F90_DTE'] = pd.to_datetime(table['F90_DTE'])
+    table['F120_DTE'] = pd.to_datetime(table['F120_DTE'])
+    table['F180_DTE'] = pd.to_datetime(table['F180_DTE'])
+    table['FCE_DTE'] = pd.to_datetime(table['FCE_DTE'])
+    
+    
+    table['ORIG_RATE'] = table['ORIG_RATE'].fillna(table['ORIG_RATE'].median())
+    table['DTI'] = table['DTI'].fillna(table['DTI'].median())
+    table['CSCORE_B'] = table['CSCORE_B'].fillna(table['CSCORE_B'].median())
+    table['CSCORE_C'] = table['CSCORE_C'].fillna(table['CSCORE_B'])
+    table['MI_PCT'] = table['MI_PCT'].fillna(0)
+    
+    table['FTHB_FLAG'] = table['FTHB_FLAG'].replace({'Y': 1, 'N': 0})
+    
+    if one_hot_encoding:
+        # Check Glossary #27
+        table['PUR_Cash_out'] = (table['PURPOSE'] == 'C').astype(int)
+        table['PUR_Refinance'] = (table['PURPOSE'] == 'R').astype(int)
+        table['PUR_Purchase'] = (table['PURPOSE'] == 'P').astype(int)
+        # Check Glossary #28
+        table['PRO_Condominium'] = (table['PROP_TYPE'] == 'CO').astype(int)
+        table['PRO_Co_operative'] = (table['PROP_TYPE'] == 'CP').astype(int)
+        table['PRO_Planned_Urban'] = (table['PROP_TYPE'] == 'PU').astype(int)
+        table['PRO_Manufact_Home'] = (table['PROP_TYPE'] == 'MH').astype(int)
+        table['PRO_Single_Family'] = (table['PROP_TYPE'] == 'SF').astype(int)
+        # Check Glossary #30
+        table['OCC_Principal'] = (table['OCC_STAT'] == 'P').astype(int)
+        table['OCC_Second'] = (table['OCC_STAT'] == 'S').astype(int)
+        table['OCC_Investor'] = (table['OCC_STAT'] == 'I').astype(int)
+        # Check Glossary #73
+        table['MI_Borrower'] = (table['MI_TYPE'] == 'BPMI').astype(int)
+        table['MI_Lender'] = (table['MI_TYPE'] == 'LPMI').astype(int)
+        table['MI_Investor'] = (table['MI_TYPE'] == 'IPMI').astype(int)  # seems trivial
+
+    # table['DLQ_FLAG'] = table[['F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE']].notna().any(axis=1).astype(int)
+    table['DLQ_30_FLAG'] = table['F30_DTE'].notna().astype(int)
+    table['DLQ_60_FLAG'] = table['F60_DTE'].notna().astype(int)
+    table['DLQ_90_FLAG'] = table['F90_DTE'].notna().astype(int)
+    table['DLQ_120_FLAG'] = table['F120_DTE'].notna().astype(int)
+    
+    table['Ongoing'] = (table['LAST_STAT'] == 'C').astype(int)
+    table['Current_DLQ'] = table['LAST_STAT'].apply(lambda x: int(x) if x.isdigit() else 0)
+    table['Prepaid_Matured'] = (table['LAST_STAT'] == 'P').astype(int)
+    table['Third_Party_Sale'] = (table['LAST_STAT'] == 'T').astype(int)
+    table['Short_Sale'] = (table['LAST_STAT'] == 'S').astype(int)
+    table['Repurchased'] = (table['LAST_STAT'] == 'R').astype(int)
+    table['Deed_In_Lieu'] = (table['LAST_STAT'] == 'F').astype(int)
+    table['Non_Performing_NS'] = (table['LAST_STAT'] == 'N').astype(int)
+    table['Reperforming_NS'] = (table['LAST_STAT'] == 'L').astype(int)
+
+    table['COMPLETE_FLAG'] = table['COMPLETE_FLAG'].fillna(0)
+    table['NET_LOSS'] = table['NET_LOSS'].fillna(0)
+    table['NET_SEV'] = table['NET_SEV'].fillna(0)
+
+    if one_hot_encoding:
+        newTable = table[[
+            'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
+            'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'PRO_Condominium', 'PRO_Co_operative', 'PRO_Planned_Urban', 
+            'PRO_Manufact_Home', 'PRO_Single_Family', 'NUM_UNIT', 'OCC_Principal', 'OCC_Second', 'OCC_Investor', 
+            'MI_PCT', 'MI_Borrower', 'MI_Lender', 'MI_Investor', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_30_FLAG', 'DLQ_60_FLAG', 'DLQ_90_FLAG', 'DLQ_120_FLAG', 
+            'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 
+            'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
+        ]]
+    else:
+        newTable = table[[
+            'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
+            'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 'MI_PCT', 'MI_TYPE','AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_30_FLAG', 'DLQ_60_FLAG', 'DLQ_90_FLAG', 'DLQ_120_FLAG', 
+            'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 
+            'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
+        ]]
+    
+    del table
+    # print("The total number of NA is ", sum(newTable.isna().sum()))
+
+    return newTable
+
+
+def data_preprocess(path):
+    lppub_column_names = ["POOL_ID", "LOAN_ID", "ACT_PERIOD", "CHANNEL", "SELLER", "SERVICER",
+                      "MASTER_SERVICER", "ORIG_RATE", "CURR_RATE", "ORIG_UPB", "ISSUANCE_UPB",
+                      "CURRENT_UPB", "ORIG_TERM", "ORIG_DATE", "FIRST_PAY", "LOAN_AGE",
+                      "REM_MONTHS", "ADJ_REM_MONTHS", "MATR_DT", "OLTV", "OCLTV",
+                      "NUM_BO", "DTI", "CSCORE_B", "CSCORE_C", "FIRST_FLAG", "PURPOSE",
+                      "PROP", "NO_UNITS", "OCC_STAT", "STATE", "MSA", "ZIP", "MI_PCT",
+                      "PRODUCT", "PPMT_FLG", "IO", "FIRST_PAY_IO", "MNTHS_TO_AMTZ_IO",
+                      "DLQ_STATUS", "PMT_HISTORY", "MOD_FLAG", "MI_CANCEL_FLAG", "Zero_Bal_Code",
+                      "ZB_DTE", "LAST_UPB", "RPRCH_DTE", "CURR_SCHD_PRNCPL", "TOT_SCHD_PRNCPL",
+                      "UNSCHD_PRNCPL_CURR", "LAST_PAID_INSTALLMENT_DATE", "FORECLOSURE_DATE",
+                      "DISPOSITION_DATE", "FORECLOSURE_COSTS", "PROPERTY_PRESERVATION_AND_REPAIR_COSTS",
+                      "ASSET_RECOVERY_COSTS", "MISCELLANEOUS_HOLDING_EXPENSES_AND_CREDITS",
+                      "ASSOCIATED_TAXES_FOR_HOLDING_PROPERTY", "NET_SALES_PROCEEDS",
+                      "CREDIT_ENHANCEMENT_PROCEEDS", "REPURCHASES_MAKE_WHOLE_PROCEEDS",
+                      "OTHER_FORECLOSURE_PROCEEDS", "NON_INTEREST_BEARING_UPB", "PRINCIPAL_FORGIVENESS_AMOUNT",
+                      "ORIGINAL_LIST_START_DATE", "ORIGINAL_LIST_PRICE", "CURRENT_LIST_START_DATE",
+                      "CURRENT_LIST_PRICE", "ISSUE_SCOREB", "ISSUE_SCOREC", "CURR_SCOREB",
+                      "CURR_SCOREC", "MI_TYPE", "SERV_IND", "CURRENT_PERIOD_MODIFICATION_LOSS_AMOUNT",
+                      "CUMULATIVE_MODIFICATION_LOSS_AMOUNT", "CURRENT_PERIOD_CREDIT_EVENT_NET_GAIN_OR_LOSS",
+                      "CUMULATIVE_CREDIT_EVENT_NET_GAIN_OR_LOSS", "HOMEREADY_PROGRAM_INDICATOR",
+                      "FORECLOSURE_PRINCIPAL_WRITE_OFF_AMOUNT", "RELOCATION_MORTGAGE_INDICATOR",
+                      "ZERO_BALANCE_CODE_CHANGE_DATE", "LOAN_HOLDBACK_INDICATOR", "LOAN_HOLDBACK_EFFECTIVE_DATE",
+                      "DELINQUENT_ACCRUED_INTEREST", "PROPERTY_INSPECTION_WAIVER_INDICATOR",
+                      "HIGH_BALANCE_LOAN_INDICATOR", "ARM_5_YR_INDICATOR", "ARM_PRODUCT_TYPE",
+                      "MONTHS_UNTIL_FIRST_PAYMENT_RESET", "MONTHS_BETWEEN_SUBSEQUENT_PAYMENT_RESET",
+                      "INTEREST_RATE_CHANGE_DATE", "PAYMENT_CHANGE_DATE", "ARM_INDEX",
+                      "ARM_CAP_STRUCTURE", "INITIAL_INTEREST_RATE_CAP", "PERIODIC_INTEREST_RATE_CAP",
+                      "LIFETIME_INTEREST_RATE_CAP", "MARGIN", "BALLOON_INDICATOR",
+                      "PLAN_NUMBER", "FORBEARANCE_INDICATOR", "HIGH_LOAN_TO_VALUE_HLTV_REFINANCE_OPTION_INDICATOR",
+                      "DEAL_NAME", "RE_PROCS_FLAG", "ADR_TYPE", "ADR_COUNT", "ADR_UPB", 
+                      "PAYMENT_DEFERRAL_MOD_EVENT_FLAG", "INTEREST_BEARING_UPB"]
+
+    lppub_column_classes = {"POOL_ID": str, "LOAN_ID": str, "ACT_PERIOD": str, "CHANNEL": str, "SELLER": str, "SERVICER": str,
+                        "MASTER_SERVICER": str, "ORIG_RATE": float, "CURR_RATE": float, "ORIG_UPB": float, "ISSUANCE_UPB": float,
+                        "CURRENT_UPB": float, "ORIG_TERM": "Int64", "ORIG_DATE": str, "FIRST_PAY": str, "LOAN_AGE": "Int64",
+                        "REM_MONTHS": "Int64", "ADJ_REM_MONTHS": "Int64", "MATR_DT": str, "OLTV": float, "OCLTV": float,
+                        "NUM_BO": "Int64", "DTI": float, "CSCORE_B": "Int64", "CSCORE_C": "Int64", "FIRST_FLAG": str, "PURPOSE": str,
+                        "PROP": str, "NO_UNITS": "Int64", "OCC_STAT": str, "STATE": str, "MSA": str, "ZIP": str, "MI_PCT": float,
+                        "PRODUCT": str, "PPMT_FLG": str, "IO": str, "FIRST_PAY_IO": str, "MNTHS_TO_AMTZ_IO": "Int64",
+                        "DLQ_STATUS": str, "PMT_HISTORY": str, "MOD_FLAG": str, "MI_CANCEL_FLAG": str, "Zero_Bal_Code": str,
+                        "ZB_DTE": str, "LAST_UPB": float, "RPRCH_DTE": str, "CURR_SCHD_PRNCPL": float, "TOT_SCHD_PRNCPL": float,
+                        "UNSCHD_PRNCPL_CURR": float, "LAST_PAID_INSTALLMENT_DATE": str, "FORECLOSURE_DATE": str,
+                        "DISPOSITION_DATE": str, "FORECLOSURE_COSTS": float, "PROPERTY_PRESERVATION_AND_REPAIR_COSTS": float,
+                        "ASSET_RECOVERY_COSTS": float, "MISCELLANEOUS_HOLDING_EXPENSES_AND_CREDITS": float,
+                        "ASSOCIATED_TAXES_FOR_HOLDING_PROPERTY": float, "NET_SALES_PROCEEDS": float,
+                        "CREDIT_ENHANCEMENT_PROCEEDS": float, "REPURCHASES_MAKE_WHOLE_PROCEEDS": float,
+                        "OTHER_FORECLOSURE_PROCEEDS": float, "NON_INTEREST_BEARING_UPB": float, "PRINCIPAL_FORGIVENESS_AMOUNT": float,
+                        "ORIGINAL_LIST_START_DATE": str, "ORIGINAL_LIST_PRICE": float, "CURRENT_LIST_START_DATE": str,
+                        "CURRENT_LIST_PRICE": float, "ISSUE_SCOREB": "Int64", "ISSUE_SCOREC": "Int64", "CURR_SCOREB": "Int64",
+                        "CURR_SCOREC": "Int64", "MI_TYPE": str, "SERV_IND": str, "CURRENT_PERIOD_MODIFICATION_LOSS_AMOUNT": float,
+                        "CUMULATIVE_MODIFICATION_LOSS_AMOUNT": float, "CURRENT_PERIOD_CREDIT_EVENT_NET_GAIN_OR_LOSS": float,
+                        "CUMULATIVE_CREDIT_EVENT_NET_GAIN_OR_LOSS": float, "HOMEREADY_PROGRAM_INDICATOR": str,
+                        "FORECLOSURE_PRINCIPAL_WRITE_OFF_AMOUNT": float, "RELOCATION_MORTGAGE_INDICATOR": str,
+                        "ZERO_BALANCE_CODE_CHANGE_DATE": str, "LOAN_HOLDBACK_INDICATOR": str, "LOAN_HOLDBACK_EFFECTIVE_DATE": str,
+                        "DELINQUENT_ACCRUED_INTEREST": float, "PROPERTY_INSPECTION_WAIVER_INDICATOR": str,
+                        "HIGH_BALANCE_LOAN_INDICATOR": str, "ARM_5_YR_INDICATOR": str, "ARM_PRODUCT_TYPE": str,
+                        "MONTHS_UNTIL_FIRST_PAYMENT_RESET": "Int64", "MONTHS_BETWEEN_SUBSEQUENT_PAYMENT_RESET": "Int64",
+                        "INTEREST_RATE_CHANGE_DATE": str, "PAYMENT_CHANGE_DATE": str, "ARM_INDEX": str,
+                        "ARM_CAP_STRUCTURE": str, "INITIAL_INTEREST_RATE_CAP": float, "PERIODIC_INTEREST_RATE_CAP": float,
+                        "LIFETIME_INTEREST_RATE_CAP": float, "MARGIN": float, "BALLOON_INDICATOR": str,
+                        "PLAN_NUMBER": str, "FORBEARANCE_INDICATOR": str, "HIGH_LOAN_TO_VALUE_HLTV_REFINANCE_OPTION_INDICATOR": str,
+                        "DEAL_NAME": str, "RE_PROCS_FLAG": str, "ADR_TYPE": str, "ADR_COUNT": "Int64", "ADR_UPB": float, 
+                        "PAYMENT_DEFERRAL_MOD_EVENT_FLAG": str, "INTEREST_BEARING_UPB": float}
+
+
+    chunks = pd.read_csv(path, delimiter='|', names=lppub_column_names, dtype=lppub_column_classes, chunksize=5000000)
+    export = pd.DataFrame()
+
+
+    for table in chunks:
+        processed = data_preparation(table)
+        if export.empty:
+            export = processed
+        else:
+            export = pd.concat([export, processed], ignore_index=True)
+
+    export = export.drop_duplicates(subset=['LOAN_ID'], keep='last')
+    return export
+
+
+
+def data_preparation(table):
     
     table['ORIG_RATE'] = pd.to_numeric(table['ORIG_RATE'], errors='coerce')
     table['CURR_RATE'] = pd.to_numeric(table['CURR_RATE'], errors='coerce')
@@ -90,23 +271,10 @@ def data_preparation(table, file_name):
 
     del lppub_base
 
-
-    acquisition_year = file_name[:4]
-    acquisition_qtr = file_name[4:6]
     
     performanceFile['servicer'] = performanceFile['servicer'].astype(str)
     performanceFile['z_zb_code'] = performanceFile['z_zb_code'].astype(str)
     
-    if acquisition_qtr == 'Q1':
-        acquisition_month = '03'
-    elif acquisition_qtr == 'Q2':
-        acquisition_month = '06'
-    elif acquisition_qtr == 'Q3':
-        acquisition_month = '09'
-    else:
-        acquisition_month = '12'
-    
-    acquisition_date = f"{acquisition_year}-{acquisition_month}-01"  # 2023-09-01
     
     # Convert all date fields to YYYY-MM-DD format
     acquisitionFile = acquisitionFile.rename(columns={
@@ -126,7 +294,6 @@ def data_preparation(table, file_name):
 
     baseTable1 = acquisitionFile.copy()
     
-    baseTable1['AQSN_DTE'] = acquisition_date
     
     baseTable1['MI_TYPE'] = baseTable1['MI_TYPE'].replace({
         '1': 'BPMI',  # Borrower Paid Mortgage Insurance
@@ -479,7 +646,7 @@ def data_preparation(table, file_name):
     baseTable7 = baseTable6[[
         'LOAN_ID', 'ORIG_CHN', 'SELLER', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'ocltv', 'num_bo', 'dti',
         'CSCORE_B', 'FTHB_FLG', 'purpose', 'PROP_TYP', 'NUM_UNIT', 'occ_stat', 'state', 'zip_3', 'mi_pct', 'CSCORE_C',
-        'relo_flg', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 'LAST_RT', 'LAST_UPB', 'msa', 'FCC_COST', 'PP_COST',
+        'relo_flg', 'MI_TYPE',  'ORIG_DTE', 'FRST_DTE', 'LAST_RT', 'LAST_UPB', 'msa', 'FCC_COST', 'PP_COST',
         'AR_COST', 'IE_COST', 'TAX_COST', 'NS_PROCS', 'CE_PROCS', 'RMW_PROCS', 'O_PROCS', 'repch_flag', 'LAST_ACTIVITY_DATE',
         'LPI_DTE', 'FCC_DTE', 'DISP_DTE', 'SERVICER', 'F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE',
         'F180_UPB', 'FCE_UPB', 'F30_UPB', 'F60_UPB', 'F90_UPB', 'MOD_FLAG', 'FMOD_DTE', 'FMOD_UPB', 'MODIR_COST', 'MODFB_COST',
@@ -493,102 +660,3 @@ def data_preparation(table, file_name):
     baseTable7['CSCORE_MN'] = baseTable7['CSCORE_MN'].astype('Int64')
 
     return baseTable7
-
-
-
-
-def preprocess(table, one_hot_encoding=True):
-    
-    table = table[[
-        'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
-        'CSCORE_B', 'FTHB_FLG', 'purpose', 'PROP_TYP', 'NUM_UNIT', 'occ_stat',
-        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE',
-        'LAST_RT', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 
-        'F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE', 
-        'ORIG_VAL', 'LAST_STAT', 'COMPLT_FLG', 'NET_LOSS', 'NET_SEV'
-    ]].rename(columns={
-        'orig_rt': 'ORIG_RATE', 'orig_amt': 'ORIG_AMOUNT', 'orig_trm': 'ORIG_TERM',
-        'oltv': 'OLTV', 'num_bo': 'NUM_BO', 'dti': 'DTI', 'FTHB_FLG': 'FTHB_FLAG',
-        'purpose': 'PURPOSE', 'PROP_TYP': 'PROP_TYPE', 'occ_stat': 'OCC_STAT', 
-        'mi_pct': 'MI_PCT', 'LAST_RT': 'LAST_RATE', 'ORIG_VAL': 'PROP_VALUE', 
-        'COMPLT_FLG': 'COMPLETE_FLAG'
-    })
-    
-    table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
-    table['ORIG_DTE'] = pd.to_datetime(table['ORIG_DTE'])
-    table['FRST_DTE'] = pd.to_datetime(table['FRST_DTE'])
-    table['LAST_ACTIVITY_DATE'] = pd.to_datetime(table['LAST_ACTIVITY_DATE'])
-    table['F30_DTE'] = pd.to_datetime(table['F30_DTE'])
-    table['F60_DTE'] = pd.to_datetime(table['F60_DTE'])
-    table['F90_DTE'] = pd.to_datetime(table['F90_DTE'])
-    table['F120_DTE'] = pd.to_datetime(table['F120_DTE'])
-    table['F180_DTE'] = pd.to_datetime(table['F180_DTE'])
-    table['FCE_DTE'] = pd.to_datetime(table['FCE_DTE'])
-    
-    
-    table['ORIG_RATE'] = table['ORIG_RATE'].fillna(table['ORIG_RATE'].median())
-    table['DTI'] = table['DTI'].fillna(table['DTI'].median())
-    table['CSCORE_B'] = table['CSCORE_B'].fillna(table['CSCORE_B'].median())
-    table['CSCORE_C'] = table['CSCORE_C'].fillna(table['CSCORE_B'])
-    table['MI_PCT'] = table['MI_PCT'].fillna(0)
-
-    table['FTHB_FLAG'] = table['FTHB_FLAG'].replace({'Y': 1, 'N': 0})
-    if one_hot_encoding:
-        # Check Glossary #27
-        table['PUR_Cash_out'] = (table['PURPOSE'] == 'C').astype(int)
-        table['PUR_Refinance'] = (table['PURPOSE'] == 'R').astype(int)
-        table['PUR_Purchase'] = (table['PURPOSE'] == 'P').astype(int)
-        # Check Glossary #28
-        table['PRO_Condominium'] = (table['PROP_TYPE'] == 'CO').astype(int)
-        table['PRO_Co_operative'] = (table['PROP_TYPE'] == 'CP').astype(int)
-        table['PRO_Planned_Urban'] = (table['PROP_TYPE'] == 'PU').astype(int)
-        table['PRO_Manufact_Home'] = (table['PROP_TYPE'] == 'MH').astype(int)
-        table['PRO_Single_Family'] = (table['PROP_TYPE'] == 'SF').astype(int)
-        # Check Glossary #30
-        table['OCC_Principal'] = (table['OCC_STAT'] == 'P').astype(int)
-        table['OCC_Second'] = (table['OCC_STAT'] == 'S').astype(int)
-        table['OCC_Investor'] = (table['OCC_STAT'] == 'I').astype(int)
-        # Check Glossary #73
-        table['MI_Borrower'] = (table['MI_TYPE'] == 'BPMI').astype(int)
-        table['MI_Lender'] = (table['MI_TYPE'] == 'LPMI').astype(int)
-        table['MI_Investor'] = (table['MI_TYPE'] == 'IPMI').astype(int)  # seems trivial
-
-    table['DLQ_FLAG'] = table[['F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE']].notna().any(axis=1).astype(int)
-
-    table['Ongoing'] = (table['LAST_STAT'] == 'C').astype(int)
-    table['Current_DLQ'] = table['LAST_STAT'].apply(lambda x: int(x) if x.isdigit() else 0)
-    table['Prepaid_Matured'] = (table['LAST_STAT'] == 'P').astype(int)
-    table['Third_Party_Sale'] = (table['LAST_STAT'] == 'T').astype(int)
-    table['Short_Sale'] = (table['LAST_STAT'] == 'S').astype(int)
-    table['Repurchased'] = (table['LAST_STAT'] == 'R').astype(int)
-    table['Deed_In_Lieu'] = (table['LAST_STAT'] == 'F').astype(int)
-    table['Non_Performing_NS'] = (table['LAST_STAT'] == 'N').astype(int)
-    table['Reperforming_NS'] = (table['LAST_STAT'] == 'L').astype(int)
-
-    table['COMPLETE_FLAG'] = table['COMPLETE_FLAG'].fillna(0)
-    table['NET_LOSS'] = table['NET_LOSS'].fillna(0)
-    table['NET_SEV'] = table['NET_SEV'].fillna(0)
-
-    if one_hot_encoding:
-        newTable = table[[
-            'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
-            'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'PRO_Condominium', 'PRO_Co_operative', 'PRO_Planned_Urban', 
-            'PRO_Manufact_Home', 'PRO_Single_Family', 'NUM_UNIT', 'OCC_Principal', 'OCC_Second', 'OCC_Investor', 
-            'MI_PCT', 'MI_Borrower', 'MI_Lender', 'MI_Investor', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
-            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 
-            'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
-        ]]
-    else:
-         newTable = table[[
-            'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'PROP_VALUE', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
-            'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 
-            'MI_TYPE','AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
-            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_FLAG', 'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 
-            'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
-        ]]
-    
-    del table
-    # print("The total number of NA is ", sum(newTable.isna().sum()))
-
-    return newTable
-    

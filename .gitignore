@@ -1,3 +1,9 @@
 # virtual environment
 venv/
-Data Preparation/2022Q1.csv
+
+# package
+LoanClassifier/build
+LoanClassifier/dist
+LoanClassifier/loan_classifier.egg-info
+
+
