@@ -109,7 +109,7 @@ classifier.save_predictions(output_path="path/to/save_predictions.csv")
 - **`utils/preprocess_general.py`**: General preprocessing functions.
 - **`utils/predict.py`**: Functions for generating predictions and plotting ROC curves.
 - **`utils/models/`**: Directory containing pre-trained model files (`*.pkl`).
-- **`sample_data/`**: Example data following required format.
+
 ---
 
 ## Sample Outputs
@@ -162,5 +162,5 @@ import loan_classifier
     ['orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
     'CSCORE_B', 'FTHB_FLG', 'purpose', 'NUM_UNIT', 'occ_stat', 'mi_pct']
     ```
-- See `sample_data/sample_woe.csv` and `sample_data/sample_non_woe.csv` for example datasets.
+- See `Demo/sample_labelled_dataset.csv` and `Demo/sample_unlabelled_dataset.csv` in the parent repo for example datasets.
 ---
