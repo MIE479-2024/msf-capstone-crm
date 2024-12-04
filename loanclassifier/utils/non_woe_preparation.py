@@ -2,7 +2,21 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import warnings
 
-def preprocess_NoWoE(data, labelled):
+
+def preprocess_NoWoE(data: pd.DataFrame, labelled: bool) -> pd.DataFrame:
+    """
+    Preprocess the input data without Weight of Evidence (WoE) encoding.
+
+    Args:
+        data (pd.DataFrame): The input loan dataset.
+        labelled (bool): Indicates if the dataset includes labels for evaluation.
+
+    Returns:
+        pd.DataFrame: The preprocessed dataset with scaled features.
+
+    Raises:
+        UserWarning: Warning regarding filtering based on DLQ_ and Ongoing flag.
+    """
     data = filter_columns(data).astype(float)
     orig_length = len(data)
     if labelled:
@@ -29,7 +43,19 @@ def preprocess_NoWoE(data, labelled):
     return output
 
 
-def filter_columns(table):
+def filter_columns(table: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filter and preprocess columns in the loan dataset.
+
+    Args:
+        table (pd.DataFrame): The raw input loan dataset.
+
+    Returns:
+        pd.DataFrame: The filtered and preprocessed dataset.
+
+    Raises:
+        ValueError: If any required column in the dataset is completely empty.
+    """
     for column in [
         'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
         'CSCORE_B', 'FTHB_FLG', 'purpose', 'NUM_UNIT', 'occ_stat', 'mi_pct'

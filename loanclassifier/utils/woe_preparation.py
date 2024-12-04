@@ -4,21 +4,35 @@ import pickle
 import os
 import pkgutil
 
+
 WOE_COLUMNS = ["ORIG_RATE","CSCORE_B","OLTV"]
 
+
 def load_model(model_name):
+    """Loads pre-trained model from file."""
     model_data = pkgutil.get_data('utils', f'models/{model_name}')
     return pickle.loads(model_data)
 
 
-
 def preprocess_WoE(data, labelled):
+    """
+    Preprocess the input data using Weight of Evidence (WoE) encoding.
+
+    Args:
+        data (pd.DataFrame): The input loan dataset.
+        labelled (bool): Indicates if the dataset includes labels for evaluation.
+
+    Returns:
+        pd.DataFrame: The preprocessed dataset with WoE-encoded columns.
+
+    Raises:
+        ValueError: If any required column is missing or completely empty.
+    """
     data = filter_woe_columns(data)
     data = data.astype(float)
 
     if labelled:
         data = data[ (data['DLQ_90_FLAG'] == 1) | ( (data['DLQ_90_FLAG'] == 0) & (data['Ongoing'] == 1) ) ]
-        # TODO: add a print here 
 
     binning_models = load_model('binning_models.pkl')
 
@@ -31,7 +45,20 @@ def preprocess_WoE(data, labelled):
     opt_bin_data["DLQ_90_FLAG"] = data["DLQ_90_FLAG"]
     return opt_bin_data
 
+
 def filter_woe_columns(table):
+    """
+    Filter and preprocess columns required for WoE transformation.
+
+    Args:
+        table (pd.DataFrame): The raw input loan dataset.
+
+    Returns:
+        pd.DataFrame: The filtered and preprocessed dataset for WoE encoding.
+
+    Raises:
+        ValueError: If any required column is completely empty.
+    """
     for column in ['orig_rt', 'oltv', 'CSCORE_B']:
         if table[column].isna().all():
             raise ValueError(f"The column '{column}' is completely empty, but required for classification models. Please provide valid data.")
