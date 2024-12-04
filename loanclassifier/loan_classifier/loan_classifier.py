@@ -191,5 +191,5 @@ class LoanClassifier():
 
         combined_data = self.data.merge(predictions_df, on="LOAN_ID", how="left")
 
-        combined_data.to_csv(output_path, index=False)
+        combined_data.to_csv(output_path, index=True)
         print(f"Predictions saved successfully to {output_path}.")
