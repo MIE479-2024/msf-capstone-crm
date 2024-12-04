@@ -502,15 +502,16 @@ def preprocess(table, one_hot_encoding=True):
     table = table[[
         'LOAN_ID', 'orig_rt', 'orig_amt', 'orig_trm', 'oltv', 'num_bo', 'dti',
         'CSCORE_B', 'FTHB_FLG', 'purpose', 'PROP_TYP', 'NUM_UNIT', 'occ_stat',
-        'mi_pct', 'CSCORE_C', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE',
-        'LAST_RT', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 
+        'state', 'zip_3', 'mi_pct', 'CSCORE_C', 'MI_TYPE', 'AQSN_DTE', 'ORIG_DTE', 
+        'FRST_DTE', 'LAST_RT', 'LAST_UPB', 'msa', 'LAST_ACTIVITY_DATE', 
         'F30_DTE', 'F60_DTE', 'F90_DTE', 'F120_DTE', 'F180_DTE', 'FCE_DTE', 
         'LAST_STAT', 'COMPLT_FLG', 'NET_LOSS', 'NET_SEV'
     ]].rename(columns={
         'orig_rt': 'ORIG_RATE', 'orig_amt': 'ORIG_AMOUNT', 'orig_trm': 'ORIG_TERM',
         'oltv': 'OLTV', 'num_bo': 'NUM_BO', 'dti': 'DTI', 'FTHB_FLG': 'FTHB_FLAG',
         'purpose': 'PURPOSE', 'PROP_TYP': 'PROP_TYPE', 'occ_stat': 'OCC_STAT', 
-        'mi_pct': 'MI_PCT', 'LAST_RT': 'LAST_RATE', 'COMPLT_FLG': 'COMPLETE_FLAG'
+        'state': 'STATE', 'zip_3': 'ZIP', 'mi_pct': 'MI_PCT', 'LAST_RT': 'LAST_RATE', 
+        'msa': 'MSA', 'COMPLT_FLG': 'COMPLETE_FLAG'
     })
     
     table['AQSN_DTE'] = pd.to_datetime(table['AQSN_DTE'])
@@ -578,7 +579,7 @@ def preprocess(table, one_hot_encoding=True):
             'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
             'FTHB_FLAG', 'PUR_Cash_out', 'PUR_Refinance', 'PUR_Purchase', 'PRO_Condominium', 'PRO_Co_operative', 'PRO_Planned_Urban', 
             'PRO_Manufact_Home', 'PRO_Single_Family', 'NUM_UNIT', 'OCC_Principal', 'OCC_Second', 'OCC_Investor', 
-            'MI_PCT', 'MI_Borrower', 'MI_Lender', 'MI_Investor', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+            'STATE', 'ZIP', 'MSA', 'MI_PCT', 'MI_Borrower', 'MI_Lender', 'MI_Investor', 'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
             'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_30_FLAG', 'DLQ_60_FLAG', 'DLQ_90_FLAG', 'DLQ_120_FLAG', 
             'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 
             'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
@@ -586,8 +587,9 @@ def preprocess(table, one_hot_encoding=True):
     else:
         newTable = table[[
             'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
-            'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 'MI_PCT', 'MI_TYPE','AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
-            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_30_FLAG', 'DLQ_60_FLAG', 'DLQ_90_FLAG', 'DLQ_120_FLAG', 
+            'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 'STATE', 'ZIP', 'MSA', 'MI_PCT', 'MI_TYPE', 
+            'AQSN_DTE', 'ORIG_DTE', 'FRST_DTE', 
+            'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_30_FLAG', 'DLQ_60_FLAG', 'DLQ_90_FLAG', 'DLQ_120_FLAG',
             'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 
             'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
         ]]
