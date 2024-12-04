@@ -585,7 +585,6 @@ def preprocess(table, one_hot_encoding=True):
             'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
         ]]
     else:
-
         newTable = table[[
             'LOAN_ID', 'ORIG_RATE', 'ORIG_AMOUNT', 'ORIG_TERM', 'OLTV', 'NUM_BO', 'DTI', 'CSCORE_B', 'CSCORE_C',
             'FTHB_FLAG', 'PURPOSE', 'PROP_TYPE', 'NUM_UNIT', 'OCC_STAT', 'STATE', 'ZIP', 'MSA', 'MI_PCT', 'MI_TYPE', 
@@ -593,7 +592,6 @@ def preprocess(table, one_hot_encoding=True):
             'LAST_RATE', 'LAST_UPB', 'LAST_ACTIVITY_DATE', 'DLQ_30_FLAG', 'DLQ_60_FLAG', 'DLQ_90_FLAG', 'DLQ_120_FLAG',
             'Ongoing', 'Current_DLQ', 'Prepaid_Matured', 'Third_Party_Sale', 'Short_Sale', 'Repurchased', 'Deed_In_Lieu', 
             'Non_Performing_NS', 'Reperforming_NS', 'COMPLETE_FLAG', 'NET_LOSS', 'NET_SEV'
-
         ]]
     
     del table
