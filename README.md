@@ -3,10 +3,10 @@
 ## Repo folder structure
 ### Data preparation
 `Data Preparation/`
-- `Data Preparation.ipynb`
-- `HPI_preprocess.ipynb`
-- `Preprocess.ipynb`
-- `prepare_func.py`
+- `Data Preparation.ipynb`: Takes Fannie Mae Single-Family Loan Performance Data of a single quarter and returns a reformatted table with statistics required for this project. Sample input: `2021Q1.csv`. Sample output: `2021Q1_stat.csv`. Raw data download: https://datadynamics.fanniemae.com/data-dynamics/#/downloadLoanData/Single-Family
+- `HPI_preprocess.ipynb`: Prepares data for models with House Price Index. Takes HPI at each three-digit zip code from 1995 to 2024 and returns a reformatted table. Sample input: `hpi_raw.csv`. Sample output: `HPI_reformat.csv`. Raw data download: https://www.fhfa.gov/data/hpi/datasets?tab=quarterly-data
+- `Preprocess.ipynb`: Takes the prepared quarterly tables from `Data Preparation.ipynb` and returns a preprocessed annual table. Sample input: `2021Q1_stat.csv` to `2021Q4_stat.csv`. Sample output: `2021_stat.csv`
+- `prepare_func.py`: Functions to prepare and preprocess the datasets
 
 ### Model training and application
 `loanclassifier/`: Contains all files related to the Python package LoanClassifier. See associated [README.md](loanclassifier/README.md) for more information.
