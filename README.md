@@ -1,15 +1,31 @@
-# $\mathbb{MSF}$ Capstone
- 
-Welcome to the $\mathbb{MSF}$ capstone! This year we will use GitHub classrooms to manage our projects throughout the term. In this repository, I have included a notebook written by the CVXPY group to get us started and review some concepts from portfolio optimization. 
+# $\mathbb{MSF}$ Capstone - Credit Risk Management 
 
-Why are we using GitHub classrooms? Here are three reasons why we are using it:
-* To avoid a learning curve in industry
-* It forces us to break the project down into components that can be easily understood by others, resulting in better code
-* It allows for easy tracking of progress and contributions of team members
+## Repo folder structure
+### Data preparation
+`Data Preparation/`
+- `Data Preparation.ipynb`
+- `HPI_preprocess.ipynb`
+- `Preprocess.ipynb`
+- `prepare_func.py`
 
-## Next Steps:
-* Download GitHub desktop
-* Go through the getting started assignment: Git and Github Fundamentals if you have not already.
-## Other Info:
-* This repo is where your entire project should live. Ideally, one should be able to install any dependencies listed in your README, clone the repo and then run the code.
-* To run the portfolio optimization notebook, install cvxpy, matplotlib, scipy, numpy
+### Model training and application
+`loanclassifier/`: Contains all files related to the Python package LoanClassifier. See associated [README.md](loanclassifier/README.md) for more information.
+
+
+`Demo`/: 
+- `demo.ipynb`: Demonstrated use of LoanClassifier package using the following sample datasets.
+- `sample_labelled_data.csv`: dataset with all populated fields
+- `sample_unlabelled_data.csv`: dataset with missing performance variables
+
+`default_modelling`: Contains all notebooks used to train all explored models.
+- `Credit Risk Scorecard\`: Training notebook with weight of evidence based approach for Logistic Regression, SVM and XGBoost models
+- `SVM Optimization\`: Training notebook related to the 2-Medians-SVM Model
+- `Scikit SVM Models\`: Training notebooks for SVM models trained using the scikit-learn library
+- `Thunder SVM Models\`: Training notebooks for SVM models trained using the thundersvm library (for GPU based training)
+- `XGBoost\`: Training notebook for XGBoost model
+- _`deprecated`_: Scripts and notebooks no longer in use.
+  
+### Exploratory analyses
+`EDA`/: Contains early exploratory data analyses of Fannie Mae dataset as well as feature correlation analyses by year.
+
+`Compare CSV`/ 
